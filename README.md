@@ -61,7 +61,7 @@ If you cant art, you can still help! Shareing arround helps more than you might 
 
 [ProtogenHelmet-ESP32](https://github.com/NCPlyn/ProtogenHelmet-ESP32), "Controller & Remote & Animator for Furry Protogen helmet using ESP32-S3 & MAX7219/WS2812" -- [NCPlyn](https://github.com/NCPlyn)
 
-[PRTGN](https://github.com/bismarx-v1/PRTGN) "OwO whats this (This repo contains electronics, mechanical and software data for a protogen visor)" -- [bismarx-v1](https://github.com/bismarx-v1) | NOTE : **THIS IS UNRELATED TO THIS PROJECT AND THE PRTGN-Development-Team**
+[PRTGN](https://github.com/bismarx-v1/PRTGN) "OwO whats this (This repo contains electronics, mechanical and software data for a protogen visor)" -- [bismarx-v1](https://github.com/bismarx-v1) | NOTE : **'PRTGN by bismarx' IS UNRELATED TO THIS PROJECT AND THE PRTGN-Development-Team**
 
 ## Plans
 
