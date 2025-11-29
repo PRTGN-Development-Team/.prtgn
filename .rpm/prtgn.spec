@@ -10,6 +10,8 @@ License: GNU GPLv3
 Group: Applications/System
 Source0: %{name}-%{version}.tar.gz
 
+Requires: alsa-lib-devel
+
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description

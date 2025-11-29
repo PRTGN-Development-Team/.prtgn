@@ -8,6 +8,9 @@ A Protogen based file extension written in Rust.
 
 ## Install
 
+>[!NOTE]
+>PRTGN_Wav uses Rodio to play sound. Rodio used the `cpal` library to send audio to the OS. 'ALSA' development files are needed to build 'cpal' on Linux. These are provided as part of the 'libasound2-dev' package on Debian and Ubuntu distributions and 'alsa-lib-devel' on Fedora.
+
 ### Debian Based Linux (Ubuntu variations, Raspberry Pi OS, Debian (obviously), e.t.c.)
 
 1. Download and install the Debian Package (.deb) file. Make sure you have the right prossesor type. (x86_64 or Aarm64)

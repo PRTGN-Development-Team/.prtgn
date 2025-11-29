@@ -16,6 +16,7 @@ use std::io::{self, Write};
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 use tui_textarea::{CursorMove, Input, Key, TextArea};
+use prtgn_encodeing::CustomEncoding;
 
 use crate::obscurity::{decrypt, obscure};
 

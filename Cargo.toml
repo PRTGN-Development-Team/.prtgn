@@ -17,14 +17,18 @@ crossterm = "0.29.0"
 ratatui = { version = "0.29.0", features = ["all-widgets"] }
 tui-textarea = "0.7.0"
 clap = { version = "4.5.51", features = ["derive"] }
-anyhow = "1.0.100"
 rodio = "0.21.1"
+prtgn_encodeing = { git = "https://github.com/PRTGN-Development-Team/prtgn_encodeing" }
 
 [package.metadata.rpm]
 package = "prtgn"
+depends = "alsa-lib-devel"
 
 [package.metadata.rpm.cargo]
 buildflags = ["--release"]
 
 [package.metadata.rpm.targets]
 prtgn = { path = "/usr/bin/prtgn" }
+
+[package.metadata.deb]
+depends = "libasound2-dev"
