@@ -2,7 +2,7 @@
 
 A Protogen file extension written in Rust. 
 
-![.prtgn logo](https://github.com/ExoticDG/.prtgn/blob/71e6699c3ce09ec64a5feb2ce82113c5c2a69477/prtgn_logo.jpeg)
+![.prtgn logo](https://github.com/PRTGN-Development-Team/.prtgn/blob/b8513ab7eab12692378fa95eada18cb786817ed9/Artiy_The_PRTGN_Protogen/prtgn_logo_colour.png)
 
 > [!CAUTION]
 > 
@@ -60,6 +60,8 @@ If you cant art, you can still help! Shareing arround helps more than you might 
 [Proto-Ear-Twitch](https://github.com/stef1949/Proto-Ear-Twitch), "Code for controlling protogen ears" -- [stef1949](https://github.com/stef1949)
 
 [ProtogenHelmet-ESP32](https://github.com/NCPlyn/ProtogenHelmet-ESP32), "Controller & Remote & Animator for Furry Protogen helmet using ESP32-S3 & MAX7219/WS2812" -- [NCPlyn](https://github.com/NCPlyn)
+
+[PRTGN](https://github.com/bismarx-v1/PRTGN) "OwO whats this (This repo contains electronics, mechanical and software data for a protogen visor)" -- [bismarx-v1](https://github.com/bismarx-v1) | NOTE : **THIS IS UNRELATED TO THIS PROJECT AND THE PRTGN-Development-Team**
 
 ## Plans
 
