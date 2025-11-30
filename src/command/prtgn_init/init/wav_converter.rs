@@ -1,7 +1,6 @@
 use rodio::{Decoder, OutputStream, OutputStreamBuilder, Sink};
 use std::fs::File;
 use std::io::BufReader;
-use crate::obscurity::{obscure};
 
 
 pub fn wav_to_prtgn(filename_prt: String) -> Result<(), Box<dyn std::error::Error>> {

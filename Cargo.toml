@@ -9,16 +9,14 @@ description = "A Protogen file extension written in Rust."
 license = "GNU GPLv3"
 license-file = "LICENSE"
 repository = "https://github.com/ExoticDG/.prtgn"
-keywords = ["protogen", "file extension", "text editor", "terminal ui", "tui", "crossterm", "ratatui", "tui-textarea"]
-categories = ["command-line-utilities", "text-editors", "terminal-applications", "file-formats"]
 
 [dependencies]
 crossterm = "0.29.0"
 ratatui = { version = "0.29.0", features = ["all-widgets"] }
-tui-textarea = "0.7.0"
+tui-textarea = { version = "0.7.0", features = ["crossterm"] }
 clap = { version = "4.5.51", features = ["derive"] }
 rodio = "0.21.1"
-prtgn_encodeing = { git = "https://github.com/PRTGN-Development-Team/prtgn_encodeing" }
+prtgn_encoding = { git = "https://github.com/PRTGN-Development-Team/PRTGN_encoding" }
 
 [package.metadata.rpm]
 package = "prtgn"

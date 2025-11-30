@@ -11,14 +11,12 @@ use ratatui::Terminal;
 use std::borrow::Cow;
 use std::{env, path};
 use std::fmt::Display;
-use std::fs;
 use std::io::{self, Write};
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 use tui_textarea::{CursorMove, Input, Key, TextArea};
-use prtgn_encodeing::CustomEncoding;
+use prtgn_encoding::{read, write};
 
-use crate::obscurity::{decrypt, obscure};
 
 macro_rules! error {
     ($fmt: expr $(, $args:tt)*) => {{
@@ -103,9 +101,8 @@ impl Buffer<'_> {
     fn new(path: PathBuf) -> io::Result<Self> {
         let mut textarea = if let Ok(md) = path.metadata() {
             if md.is_file() {
-                let content = fs::read_to_string(&path)?;
-                let decrypted_content = decrypt(&content);
-                let mut textarea: TextArea = decrypted_content.lines().map(String::from).collect();
+                let content = read(path.to_string_lossy().to_string())?;
+                let mut textarea = TextArea::from(content.lines());
 
                 if textarea.lines().iter().any(|l| l.starts_with('\t')) {
                     textarea.set_hard_tab_indent(true);
@@ -175,7 +172,7 @@ impl Editor<'_> {
                         Constraint::Length(1),
                         Constraint::Length(1),
                     ]
-                    .as_ref(),
+                        .as_ref(),
                 );
 
             self.term.draw(|f| {
@@ -203,7 +200,7 @@ impl Editor<'_> {
                             Constraint::Min(1),
                             Constraint::Length(cursor.len() as u16),
                         ]
-                        .as_ref(),
+                            .as_ref(),
                     )
                     .split(chunks[2]);
                 let status_style = Style::default().add_modifier(Modifier::REVERSED);
@@ -300,51 +297,50 @@ impl Editor<'_> {
             //         }
             //     }
             // } else {
-                let input = ratatui::crossterm::event::read()?.into();
-                self.message = None;
-                match input {
-                    Input {
-                        key: Key::Char('q'),
-                        ctrl: true,
-                        ..
-                    } => break,
-                    Input {
-                        key: Key::Char('t'),
-                        ctrl: true,
-                        ..
-                    } => {
-                        self.current = (self.current + 1) % self.buffers.len();
-                        self.message =
-                            Some(format!("Switched to buffer #{}", self.current + 1).into());
-                    }
-                    Input {
-                        key: Key::Char('s'),
-                        ctrl: true,
-                        ..
-                    } => {
-                        let buffer = &mut self.buffers[self.current];
-                        if buffer.modified {
-                            let prtgn_text = buffer.textarea.lines().join("\n");
-                            let obscured = obscure(prtgn_text);
-                            fs::write(&buffer.path, obscured)?;
-                            buffer.modified = false;
-                            self.message = Some("Saved!".into());
-                        } else {
-                            self.message = Some("No changes to save".into());
-                        }
-                    }
-                    // Input {
-                    //     key: Key::Char('g'),
-                    //     ctrl: true,
-                    //     ..
-                    // } => {
-                    //     self.search.open();
-                    //}
-                    input => {
-                        let buffer = &mut self.buffers[self.current];
-                        buffer.modified |= buffer.textarea.input(input);
+            let input = ratatui::crossterm::event::read()?.into();
+            self.message = None;
+            match input {
+                Input {
+                    key: Key::Char('q'),
+                    ctrl: true,
+                    ..
+                } => break,
+                Input {
+                    key: Key::Char('t'),
+                    ctrl: true,
+                    ..
+                } => {
+                    self.current = (self.current + 1) % self.buffers.len();
+                    self.message =
+                        Some(format!("Switched to buffer #{}", self.current + 1).into());
+                }
+                Input {
+                    key: Key::Char('s'),
+                    ctrl: true,
+                    ..
+                } => {
+                    let buffer = &mut self.buffers[self.current];
+                    if buffer.modified {
+                        let content = buffer.textarea.lines().join("\n");
+                        write(buffer.path.to_string_lossy().to_string(), content)?;
+                        buffer.modified = false;
+                        self.message = Some("Saved!".into());
+                    } else {
+                        self.message = Some("No changes to save".into());
                     }
                 }
+                // Input {
+                //     key: Key::Char('g'),
+                //     ctrl: true,
+                //     ..
+                // } => {
+                //     self.search.open();
+                //}
+                input => {
+                    let buffer = &mut self.buffers[self.current];
+                    buffer.modified |= buffer.textarea.input(input);
+                }
+            }
             //}
         }
 
@@ -361,10 +357,10 @@ impl Drop for Editor<'_> {
             LeaveAlternateScreen,
             DisableMouseCapture
         )
-        .unwrap();
+            .unwrap();
     }
 }
 
 pub fn editor(filename: String) -> io::Result<()> {
-    Editor::new(filename.into())?.run()
+    Editor::new(filename)?.run()
 }
