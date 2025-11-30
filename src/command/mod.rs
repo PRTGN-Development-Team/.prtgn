@@ -7,7 +7,7 @@ mod prtgn_wav;
 #[command(author, version, about = "
     A protogen inspired file extension written in Rust.
 
-    .prtgn  Copyright (C) 2025  ExoticDG
+    .prtgn  Copyright (C) 2025  PRTGN Development Team
     This program comes with ABSOLUTELY NO WARRANTY.
     This is free software, and you are welcome to redistribute it
     under certain conditions.
@@ -57,3 +57,4 @@ pub fn command() {
         }
     }
 }
+
