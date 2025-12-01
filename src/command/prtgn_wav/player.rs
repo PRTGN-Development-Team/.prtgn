@@ -34,7 +34,7 @@ fn play() -> Result<(), Box<dyn std::error::Error>> {
     let sink = Sink::connect_new(&stream_handle.mixer());
 
     // Open the audio file
-    let file = File::open(filename_prt)?;
+    let file = File::open(filenam_prt_wav)?;
     let file_reader = BufReader::new(file);
 
     // Decode the audio file

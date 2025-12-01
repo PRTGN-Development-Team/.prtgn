@@ -17,6 +17,7 @@ tui-textarea = { git = "https://github.com/PRTGN-Development-Team/tui-textarea" 
 clap = { version = "4.5.51", features = ["derive"] }
 rodio = "0.21.1"
 prtgn_encoding = { git = "https://github.com/PRTGN-Development-Team/PRTGN_encoding" }
+color-eyre = "0.6.5"
 
 [package.metadata.rpm]
 package = "prtgn"
