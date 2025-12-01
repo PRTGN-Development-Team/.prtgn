@@ -1,4 +1,4 @@
-use crossterm::event::{self, DisableMouseCapture, EnableMouseCapture};
+use crossterm::event::{self, DisableMouseCapture, EnableMouseCapture, Event, MouseEvent, MouseEventKind};
 use crossterm::terminal::{
     disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
 };
@@ -11,12 +11,12 @@ use ratatui::Terminal;
 use std::borrow::Cow;
 use std::{env, path};
 use std::fmt::Display;
+use std::fs;
 use std::io::{self, Write};
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 use tui_textarea::{CursorMove, Input, Key, TextArea};
 use prtgn_encoding::{read, write};
-
 
 macro_rules! error {
     ($fmt: expr $(, $args:tt)*) => {{
@@ -101,8 +101,8 @@ impl Buffer<'_> {
     fn new(path: PathBuf) -> io::Result<Self> {
         let mut textarea = if let Ok(md) = path.metadata() {
             if md.is_file() {
-                let content = read(path.to_string_lossy().to_string())?;
-                let mut textarea = TextArea::from(content.lines());
+                let decrypted_content = read(path.to_string_lossy().to_string()).map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{}", e)))?;
+                let mut textarea: TextArea = decrypted_content.lines().map(String::from).collect();
 
                 if textarea.lines().iter().any(|l| l.starts_with('\t')) {
                     textarea.set_hard_tab_indent(true);
@@ -148,7 +148,7 @@ impl Editor<'_> {
         }
         let mut stdout = io::stdout();
         enable_raw_mode()?;
-        crossterm::execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
+        crossterm::execute!(stdout, EnterAlternateScreen)?;
         let backend = CrosstermBackend::new(stdout);
         let term = Terminal::new(backend)?;
         Ok(Self {
@@ -245,103 +245,48 @@ impl Editor<'_> {
                 f.render_widget(Paragraph::new(message), chunks[3]);
             })?;
 
-            // if search_height > 0 {
-            //     let textarea = &mut self.buffers[self.current].textarea;
-            //     match ratatui::crossterm::event::read()?.into() {
-            //         Input {
-            //             key: Key::Char('g' | 'n'),
-            //             ctrl: true,
-            //             alt: false,
-            //             ..
-            //         }
-            //         | Input { key: Key::Down, .. } => {
-            //             if !textarea.search_forward(false) {
-            //                 self.search.set_error(Some("Pattern not found"));
-            //             }
-            //         }
-            //         Input {
-            //             key: Key::Char('g'),
-            //             ctrl: false,
-            //             alt: true,
-            //             ..
-            //         }
-            //         | Input {
-            //             key: Key::Char('p'),
-            //             ctrl: true,
-            //             alt: false,
-            //             ..
-            //         }
-            //         | Input { key: Key::Up, .. } => {
-            //             if !textarea.search_backward(false) {
-            //                 self.search.set_error(Some("Pattern not found"));
-            //             }
-            //         }
-            //         Input {
-            //             key: Key::Enter, ..
-            //         } => {
-            //             if !textarea.search_forward(true) {
-            //                 self.message = Some("Pattern not found".into());
-            //             }
-            //             self.search.close();
-            //             textarea.set_search_pattern("").unwrap();
-            //         }
-            //         Input { key: Key::Esc, .. } => {
-            //             self.search.close();
-            //             textarea.set_search_pattern("").unwrap();
-            //         }
-            //         input => {
-            //             if let Some(query) = self.search.input(input) {
-            //                 let maybe_err = textarea.set_search_pattern(query).err();
-            //                 self.search.set_error(maybe_err);
-            //             }
-            //         }
-            //     }
-            // } else {
-            let input = ratatui::crossterm::event::read()?.into();
             self.message = None;
-            match input {
-                Input {
-                    key: Key::Char('q'),
-                    ctrl: true,
-                    ..
-                } => break,
-                Input {
-                    key: Key::Char('t'),
-                    ctrl: true,
-                    ..
-                } => {
-                    self.current = (self.current + 1) % self.buffers.len();
-                    self.message =
-                        Some(format!("Switched to buffer #{}", self.current + 1).into());
-                }
-                Input {
-                    key: Key::Char('s'),
-                    ctrl: true,
-                    ..
-                } => {
-                    let buffer = &mut self.buffers[self.current];
-                    if buffer.modified {
-                        let content = buffer.textarea.lines().join("\n");
-                        write(buffer.path.to_string_lossy().to_string(), content)?;
-                        buffer.modified = false;
-                        self.message = Some("Saved!".into());
-                    } else {
-                        self.message = Some("No changes to save".into());
+            match event::read()? {
+                Event::Key(key) => {
+                    let input: Input = key.into();
+                    match input {
+                        Input {
+                            key: Key::Char('q'),
+                            ctrl: true,
+                            ..
+                        } => break,
+                        Input {
+                            key: Key::Char('t'),
+                            ctrl: true,
+                            ..
+                        } => {
+                            self.current = (self.current + 1) % self.buffers.len();
+                            self.message =
+                                Some(format!("Switched to buffer #{}", self.current + 1).into());
+                        }
+                        Input {
+                            key: Key::Char('s'),
+                            ctrl: true,
+                            ..
+                        } => {
+                            let buffer = &mut self.buffers[self.current];
+                            if buffer.modified {
+                                let prtgn_text = buffer.textarea.lines().join("\n");
+                                write(buffer.path.to_string_lossy().to_string(), prtgn_text).map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{}", e)))?;
+                                buffer.modified = false;
+                                self.message = Some("Saved!".into());
+                            } else {
+                                self.message = Some("No changes to save".into());
+                            }
+                        }
+                        input => {
+                            let buffer = &mut self.buffers[self.current];
+                            buffer.modified |= buffer.textarea.input(input);
+                        }
                     }
                 }
-                // Input {
-                //     key: Key::Char('g'),
-                //     ctrl: true,
-                //     ..
-                // } => {
-                //     self.search.open();
-                //}
-                input => {
-                    let buffer = &mut self.buffers[self.current];
-                    buffer.modified |= buffer.textarea.input(input);
-                }
+                _ => {}
             }
-            //}
         }
 
         Ok(())
@@ -354,13 +299,12 @@ impl Drop for Editor<'_> {
         disable_raw_mode().unwrap();
         crossterm::execute!(
             self.term.backend_mut(),
-            LeaveAlternateScreen,
-            DisableMouseCapture
+            LeaveAlternateScreen
         )
             .unwrap();
     }
 }
 
 pub fn editor(filename: String) -> io::Result<()> {
-    Editor::new(filename)?.run()
+    Editor::new(filename.into())?.run()
 }
