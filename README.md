@@ -49,7 +49,7 @@ Have a look at our wonderful command structure! Start out with 'prtgn' and then 
 
 Some ways to contribute are code or ideas, but you stil can contribute if you dont have either of those!
 
-Fanart \ Animation is a wonderful way to show support, there is a referance drawing for the mascot, Artiy, located in `.prtgn/Artiy_The_PRTGN_Protogen` as well as a VR-ready blender model in a sub directory! --note, the blender model is not at all complete. Its currently just a template. 
+Fanart is a wonderful way to show support, there is a referance drawing for the mascot, Artiy, located in the [PRTGN_Artwork Reposotory](https://github.com/PRTGN-Development-Team/PRTGN_Artwork).
 
 If you cant art, you can still help! Shareing arround helps more than you might thing! Make a post about us, share us with word of mouth or digital word of mouth. The more people know, the more support there is.
 
