@@ -64,7 +64,7 @@ If you cant art, you can still help! Shareing arround helps more than you might 
 - [x] Automatically adding .prtgn to a filename in the init command
 - [ ] Benchmark/test sub command \\ usage stats and whatnot \\ https://github.com/sharkdp/hyperfine ?
 - [ ] *File format converter*
-- [ ] ***MIDI / other musics*** | Inspired by [Ivycomb](https://youtube.com/@ivycomb?si=hL9f19mSvyffFUk1) - [YTShort](https://youtube.com/shorts/dQyZ-WTuBwQ?si=PoWy2zuMMxrF3mQX) / [Ivycomb Music](https://youtube.com/@ivycombmusic?si=K92ak8535oQ7ik8r) - [YTMusic](https://music.youtube.com/watch?v=J620cBDOrj4&si=S0GaU3D3IH-71s0k)
+- [x] MIDI / other musics | Inspired by [Ivycomb](https://youtube.com/@ivycomb?si=hL9f19mSvyffFUk1) - [YTShort](https://youtube.com/shorts/dQyZ-WTuBwQ?si=PoWy2zuMMxrF3mQX) / [Ivycomb Music](https://youtube.com/@ivycombmusic?si=K92ak8535oQ7ik8r) - [YTMusic](https://music.youtube.com/watch?v=J620cBDOrj4&si=S0GaU3D3IH-71s0k)
 - [ ] Website
 
 ## For Thoust dev's
