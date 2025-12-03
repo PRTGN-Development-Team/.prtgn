@@ -16,7 +16,7 @@ ratatui = { version = "0.29.0", features = ["all-widgets"] }
 tui-textarea = { git = "https://github.com/PRTGN-Development-Team/tui-textarea" }
 clap = { version = "4.5.51", features = ["derive"] }
 rodio = "0.21.1"
-prtgn_encoding = { git = "https://github.com/PRTGN-Development-Team/PRTGN_encoding" }
+prtgn_encoding = "0.1.1"
 color-eyre = "0.6.5"
 hound = "3.5.1"
 

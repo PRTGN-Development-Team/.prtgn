@@ -1035,8 +1035,9 @@ dependencies = [
 
 [[package]]
 name = "prtgn_encoding"
-version = "0.1.0"
-source = "git+https://github.com/PRTGN-Development-Team/PRTGN_encoding#68730b8c9d8e30880b79f0fe6de8217e0b14b9b1"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7f04115e7deaa542eaed079ecc5d46a9bb41a3f985afccb5820513e1b543ee9"
 
 [[package]]
 name = "quote"
