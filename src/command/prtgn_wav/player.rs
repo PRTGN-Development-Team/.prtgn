@@ -26,7 +26,10 @@ fn render(frame: &mut Frame) {
     frame.render_widget("hello world", frame.area());
 }
 
-fn play() -> Result<(), Box<dyn std::error::Error>> {
+pub fn play(filename_wav: String) -> Result<(), Box<dyn std::error::Error>> {
+    
+    let filename_wav = filename_wav;
+    
     // Get a handle to the default output stream and a stream handle
     let (stream_handle) = OutputStreamBuilder::open_default_stream()?;
 
@@ -34,7 +37,7 @@ fn play() -> Result<(), Box<dyn std::error::Error>> {
     let sink = Sink::connect_new(&stream_handle.mixer());
 
     // Open the audio file
-    let file = File::open(filenam_prt_wav)?;
+    let file = File::open(filename_wav)?;
     let file_reader = BufReader::new(file);
 
     // Decode the audio file

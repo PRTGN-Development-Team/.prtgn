@@ -28,30 +28,20 @@ Welcome to .prtgn! The all new CLI file format for Protogens. Powered by Rust an
 
 We offer 'secure' files only select programs have the ability to understand, so your RAM cash and USB serial is safe with us!
 
-> [!CAUTION]
-> **PRTGN IS A SECURITY THROUGH OBSCURITY APPLICATION**
->
-> The ONLY security on PRTGN is obscuring the data in files. **IT IS NOT ENCRYPTED**
->
-> PRTGN is NOT meant as a file type for critical information and therefor the security is treated as such.
-> We will take security issues and treat them as problems, though ultimately PRTGN shouldn't be relied on for security. 
->
-> PRTGN is NOT at fault for any information that gets seen through the use of our files
-
-Along with that we have a wonderful Protogen friendly CLI interface, and a built in translation for Human or other species's to understand.  
+Along with that we have a wonderful Protogen friendly CLI interface, and a built-in translation for Human or other species to understand.  
 
 Have a look at our wonderful command structure! Start out with 'prtgn' and then apply any of the following sub commands!
 
 >[!TIP]
->Check out out [wiki](https://github.com/ExoticDG/.prtgn/wiki) for the different commands!
+>Check out [wiki](https://github.com/ExoticDG/.prtgn/wiki) for the different commands!
 
 ## Wana help?
 
-Some ways to contribute are code or ideas, but you stil can contribute if you dont have either of those!
+Some ways to contribute are code or ideas, but you stil can contribute if you don't have either of those!
 
 Fanart is a wonderful way to show support, there is a referance drawing for the mascot, Artiy, located in the [PRTGN_Artwork Reposotory](https://github.com/PRTGN-Development-Team/PRTGN_Artwork).
 
-If you cant art, you can still help! Shareing arround helps more than you might thing! Make a post about us, share us with word of mouth or digital word of mouth. The more people know, the more support there is.
+If you cant art, you can still help! Shareing arround helps more than you might think! Make a post about us, share us with word of mouth or digital word of mouth. The more people know, the more support there is.
 
 ## A few other protogen repositories 
 

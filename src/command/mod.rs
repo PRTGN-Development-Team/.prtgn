@@ -24,12 +24,12 @@ enum Commands {
     #[command(about = "Create or Edit/View a .prtgn file and sub-files")]
     Init {
         filename: String,
-        #[arg(long, action = clap::ArgAction::SetTrue)]
-        wav: bool,
     },
-    #[command(about = "Open the PRTGN Audio Interface (PAI)")]
+    #[command(about = "Open the PRTGN Audio Interface")]
     Wav {
         filename: String,
+        // #[arg(long, action = clap::ArgAction::SetTrue)]
+        // wav: bool,
     },
 
 }
@@ -38,11 +38,11 @@ pub fn command() {
     let args = Cli::parse();
 
     match &args.command {
-        Some(Commands::Init { filename, wav }) => {
+        Some(Commands::Init { filename }) => {
             println!("Init: {:?}", filename);
-            prtgn_init::init(filename.to_string(), *wav);
+            prtgn_init::init(filename.to_string());
         }
-        Some(Commands::Wav { filename }) => {
+        Some(Commands::Wav { filename}) => {
             println!("Wav: {:?}", filename);
             prtgn_wav::wav(filename.to_string());
 

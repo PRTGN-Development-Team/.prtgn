@@ -13,13 +13,13 @@ A Protogen based file extension written in Rust.
 
 ### Debian Based Linux (Ubuntu variations, Raspberry Pi OS, Debian (obviously), e.t.c.)
 
-1. Download and install the Debian Package (.deb) file. Make sure you have the right prossesor type. (x86_64 or Aarm64)
+1. Download and install the Debian Package (.deb) file. Make sure you have the right processor type. (x86_64 or Aarm64)
 
-### Feadora / RHEL Based Linux (Fedora, Red Hat Enterprise Linux (RHEL), Rocky Linux, Cent OS, e.t.c.)
+### Fedora / RHEL Based Linux (Fedora, Red Hat Enterprise Linux (RHEL), Rocky Linux, Cent OS, e.t.c.)
 
-1. Download and install the RPM Package Manager/Red Hat Package Manager (.rpm) file. Make sure you have the right prossesor type. (x86_64 or Aarm64)
+1. Download and install the RPM Package Manager/Red Hat Package Manager (.rpm) file. Make sure you have the right processor type. (x86_64 or Aarm64)
 
 ### Microsoft Windows (Built for 11 but should work elsewhere)
 
-1. Download and install the Windows Executable (.exe) file. Make sure you have the right prossesor type. (x86_64 or Aarm64)
+1. Download and install the Windows Executable (.exe) file. Make sure you have the right processor type. (x86_64 or Aarm64)
 

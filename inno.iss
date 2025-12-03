@@ -1,13 +1,13 @@
 #define MyAppName "prtgn"
 #define MyAppVersion GetEnv("APP_VERSION")
 ; #define MyAppVersion "9.0.2"
-#define MyAppPublisher "The .prtgn Team"
-#define MyAppURL "https://github.com/ExoticDG/.prtgn"
+#define MyAppPublisher "The PRTGN Development Team"
+#define MyAppURL "https://github.com/PRTGN-Development-Team/.prtgn"
 #define MyAppExeName "prtgn.exe"
 ; #define MyAppAssocName "Protogen File Format"
 ; #define MyAppAssocExt ".prtgn"
 #define PrtgnAssocKey StringChange("Protogen File Format", " ", "") + ".prtgn"
-; #define PrtgnMIDIAssocKey StringChange(Protogen Midi Format, " ", "") + .prtgn_midi
+#define PrtgnWAVAssocKey StringChange("Protogen WAV Format", " ", "") + ".prtgn_wav"
 
 
 [Setup]
@@ -67,6 +67,10 @@ Root: HKA; Subkey: "Software\Classes\{#PrtgnAssocKey}"; ValueType: string; Value
 Root: HKA; Subkey: "Software\Classes\{#PrtgnAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
 Root: HKA; Subkey: "Software\Classes\{#PrtgnAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
+Root: HKA; Subkey: "Software\Classes\.prtgn_wav\OpenWithProgids"; ValueType: string; ValueName: "{#PrtgnWAVAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
+Root: HKA; Subkey: "Software\Classes\{#PrtgnWAVAssocKey}"; ValueType: string; ValueName: ""; ValueData: "Protogen WAV Format"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\{#PrtgnWAVAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
+Root: HKA; Subkey: "Software\Classes\{#PrtgnWAVAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
