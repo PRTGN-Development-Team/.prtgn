@@ -1,6 +1,6 @@
 [package]
 name = "prtgn"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2024"
 documentation = "https://github.com/ExoticDG/.prtgn/wiki"
 readme = "README.md"
