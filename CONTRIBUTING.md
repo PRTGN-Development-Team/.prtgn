@@ -1,4 +1,4 @@
-# Contributing to CONTRIBUTING.md
+# Contributing to PRTGN
 
 First off, thanks for taking the time to contribute! ❤️
 
@@ -129,6 +129,7 @@ Enhancement suggestions are tracked as [GitHub issues](/issues).
 
 ## Attribution
 This guide is based on the **contributing.md**. [Make your own](https://contributing.md/)!
+
 
 
 
