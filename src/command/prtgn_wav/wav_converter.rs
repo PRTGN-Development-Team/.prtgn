@@ -72,7 +72,7 @@ pub fn prtgn_to_wav(filename: String) -> Result<(), Box<dyn std::error::Error>> 
 
     let parts: Vec<&str> = decoded_string.splitn(3, ' ').collect();
     if parts.len() < 3 {
-        return Err("Invalid prtgn_wav format: missing metadata".into());
+        return Err("Mate. No. That wont work. Your files invalid. Try again.".into());
     }
 
     let channels: u16 = parts[0].parse()?;
