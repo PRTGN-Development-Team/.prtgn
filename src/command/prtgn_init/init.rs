@@ -7,7 +7,10 @@ pub fn init(filename: String) {
     
         if !filename_prt.ends_with(".prtgn") {
        filename_prt.push_str(".prtgn");
-        text_editor::editor(filename_prt);
+        text_editor::editor(filename_prt).unwrap();
       }
+    else {
+        text_editor::editor(filename_prt).unwrap();
+    }
     
 }

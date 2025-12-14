@@ -5,7 +5,11 @@ mod prtgn_wav;
 
 #[derive(Parser)]
 #[command(author, version, about = "
+    -----------------------------------------------------------------
+
     A protogen inspired file extension written in Rust.
+
+    -----------------------------------------------------------------
 
     .prtgn  Copyright (C) 2025  PRTGN Development Team
     This program comes with ABSOLUTELY NO WARRANTY.
@@ -13,6 +17,20 @@ mod prtgn_wav;
     under certain conditions.
 
     Licensed under the GNU General Public License v3.0
+
+    -----------------------------------------------------------------
+
+    Artiy and official PRTGN artwork Copyright (C) 2025 by PRTGN Development Team
+    Licensed under Creative Commons Attribution-NonCommercial 4.0 International.
+    To view a copy of this license, visit https://creativecommons.org/licenses/by-nc/4.0/
+
+    PRTGN Official artwork can be found at this repo : https://github.com/PRTGN-Development-Team/PRTGN_Artwork
+
+    -----------------------------------------------------------------
+
+    Protogens, Primagens, and Zeniths Outer Reach (ZOR) were created by CoolKoinu.
+    All credit for Protogens, Primagens, and ZOR go to them and there team.
+
 ")]
 struct Cli {
     #[command(subcommand)]
@@ -21,15 +39,17 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    #[command(about = "Create or Edit/View a .prtgn file and sub-files")]
+    #[command(about = "Create or Edit/View a .prtgn file")]
     Init {
         filename: String,
     },
-    #[command(about = "Open the PRTGN Audio Interface")]
+    #[command(about = "Create or playback a .prtgn_wav file")]
     Wav {
         filename: String,
-        // #[arg(long, action = clap::ArgAction::SetTrue)]
-        // wav: bool,
+        #[arg(long, action = clap::ArgAction::SetTrue)]
+        convert: bool,
+        #[arg(long, action = clap::ArgAction::SetTrue)]
+        play: bool,
     },
 
 }
@@ -42,10 +62,11 @@ pub fn command() {
             println!("Init: {:?}", filename);
             prtgn_init::init(filename.to_string());
         }
-        Some(Commands::Wav { filename}) => {
+        Some(Commands::Wav { filename, convert, play}) => {
             println!("Wav: {:?}", filename);
-            prtgn_wav::wav(filename.to_string());
-
+            println!("Convert : {:?}", convert);
+            println!("Play : {:?}", play);
+            prtgn_wav::wav(filename.to_string(), convert.to_owned(), play.to_owned());
         }
         // Some(Commands::Open { filename }) => {
         //     println!("Open: {}", filename);
