@@ -25,7 +25,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. Fedora 42]
- - PRTGN Version [e.g. 0.3.1]
+ - Version [e.g. 0.3.1]
 
 
 **Additional context**
