@@ -67,6 +67,15 @@ If you cant art, you can still help! Shareing arround helps more than you might 
 - [x] MIDI / other musics | Inspired by [Ivycomb](https://youtube.com/@ivycomb?si=hL9f19mSvyffFUk1) - [YTShort](https://youtube.com/shorts/dQyZ-WTuBwQ?si=PoWy2zuMMxrF3mQX) / [Ivycomb Music](https://youtube.com/@ivycombmusic?si=K92ak8535oQ7ik8r) - [YTMusic](https://music.youtube.com/watch?v=J620cBDOrj4&si=S0GaU3D3IH-71s0k)
 - [ ] Website
 
+
+## Contributors
+
+
+<a href="https://github.com/PRTGN-Development-Team/.prtgn/graphs/contributors
+s">
+  <img src="https://contrib.rocks/image?repo=PRTGN-Development-Team/.prtgn" />
+</a>
+
 ## For Thoust dev's
 
 **Debian (deb) install package :** [Cargo-deb](https://crates.io/crates/cargo-deb)
