@@ -1,4 +1,4 @@
-use prtgn::{command};
+use prtgn::command;
 
 fn main() {
     command::command();

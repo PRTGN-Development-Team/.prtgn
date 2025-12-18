@@ -3,6 +3,8 @@ use clap::{Parser, Subcommand};
 mod prtgn_init;
 mod prtgn_wav;
 
+mod prtgn_flac;
+
 #[derive(Parser)]
 #[command(author, version, about = "
     -----------------------------------------------------------------
@@ -51,6 +53,14 @@ enum Commands {
         #[arg(long, action = clap::ArgAction::SetTrue)]
         play: bool,
     },
+    #[command(about = "Create or playback a .prtgn_flac file")]
+    Flac {
+        filename: String,
+        #[arg(long, action = clap::ArgAction::SetTrue)]
+        convert: bool,
+        #[arg(long, action = clap::ArgAction::SetTrue)]
+        play: bool,
+    },
 
 }
 
@@ -67,6 +77,12 @@ pub fn command() {
             println!("Convert : {:?}", convert);
             println!("Play : {:?}", play);
             prtgn_wav::wav(filename.to_string(), convert.to_owned(), play.to_owned());
+        }
+        Some(Commands::Flac { filename, convert, play}) => {
+            println!("Flac: {:?}", filename);
+            println!("Convert : {:?}", convert);
+            println!("Play : {:?}", play);
+            prtgn_flac::flac(filename.to_string(), convert.to_owned(), play.to_owned());
         }
         // Some(Commands::Open { filename }) => {
         //     println!("Open: {}", filename);
