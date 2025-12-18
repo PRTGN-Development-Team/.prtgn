@@ -1,14 +1,14 @@
 use crate::command::prtgn_flac::player::player;
-use claxon;
 use prtgn_encoding::{read, write};
 use rodio::{Decoder, Source};
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, BufWriter};
 use indicatif::{ProgressBar, ProgressStyle};
-
+use flac_codec::decode::StreamDecode;
+use flac_codec::encode::StreamEncode;
+use flac_codec::model::{Block, StreamInfo};
 
 pub fn flac_to_prtgn(filename: String) -> Result<(), Box<dyn std::error::Error>> {
-
     println!("Converting `{filename}` into a PRTGN_FLAC file.");
 
     let mut filename_flac = filename.clone();
@@ -16,9 +16,10 @@ pub fn flac_to_prtgn(filename: String) -> Result<(), Box<dyn std::error::Error>>
         filename_flac.push_str(".flac");
     }
 
-    // Use claxon to get the number of samples for the progress bar
-    let reader = claxon::FlacReader::open(&filename_flac)?;
-    let num_samples = reader.streaminfo().samples.unwrap_or(0);
+    let input = Box::new(File::open(&filename_flac)?);
+    let (mut decoder, stream_info) = StreamDecoder::new(input)?;
+
+    let num_samples = stream_info.total_samples;
 
     let pb = ProgressBar::new(num_samples * 2);
     pb.set_style(ProgressStyle::default_bar()
@@ -27,14 +28,22 @@ pub fn flac_to_prtgn(filename: String) -> Result<(), Box<dyn std::error::Error>>
         .progress_chars("=>-"));
     pb.set_message("Transforming...");
 
-    let file = File::open(&filename_flac)?;
-    let file_reader = BufReader::new(file);
+    let sample_rate = stream_info.sample_rate;
+    let channels = stream_info.channels;
+    let bits_per_sample = stream_info.bits_per_sample;
 
-    let decoder = Decoder::new(file_reader)?;
-    let sample_rate = decoder.sample_rate();
-    let channels = decoder.channels();
-
-    let samples: Vec<f32> = decoder.map(|s| { pb.inc(1); s }).collect();
+    let mut samples = Vec::new();
+    while let Some(block) = decoder.next_block()? {
+        if let Block::Data(data) = block {
+            for i in 0..data.nsamples() {
+                for j in 0..data.nchannels() {
+                    let sample = data.sample(j, i);
+                    pb.inc(1);
+                    samples.push(sample as f32 / (1 << (bits_per_sample - 1)) as f32);
+                }
+            }
+        }
+    }
 
     let samples_vec: Vec<String> = samples
         .into_iter()
@@ -60,8 +69,6 @@ pub fn flac_to_prtgn(filename: String) -> Result<(), Box<dyn std::error::Error>>
     Ok(())
 }
 
-
-
 pub fn prtgn_to_flac(filename: String) -> Result<(), Box<dyn std::error::Error>> {
     let mut filename_prtgn = filename.clone();
     if !filename_prtgn.ends_with(".prtgn_flac") {
@@ -75,7 +82,7 @@ pub fn prtgn_to_flac(filename: String) -> Result<(), Box<dyn std::error::Error>>
         return Err("Mate. No. That wont work. Your files invalid. Try again.".into());
     }
 
-    let channels: u16 = parts[0].parse()?;
+    let channels: u32 = parts[0].parse()?;
     let sample_rate: u32 = parts[1].parse()?;
     let samples_str = parts[2];
 
@@ -105,17 +112,12 @@ pub fn prtgn_to_flac(filename: String) -> Result<(), Box<dyn std::error::Error>>
         filename_flac.push_str(".flac");
     }
 
-    // let mut writer = FlacWriter::create(
-    //     &filename_flac,
-    //     channels as u32,
-    //     sample_rate,
-    //     32, // bits_per_sample
-    // )?;
-    // for sample in samples {
-    //     writer.write_sample(sample)?;
-    //     pb.inc(1);
-    // }
-    // writer.finalize()?;
+    let writer = Box::new(BufWriter::new(File::create(&filename_flac)?));
+    let stream_info = StreamInfo::new(sample_rate, channels, 32);
+    let mut encoder = StreamEncoder::new(writer, stream_info)?;
+
+    encoder.write_interleaved(samples.as_slice())?;
+    encoder.finish()?;
 
     pb.finish_with_message("Now playing..");
 
