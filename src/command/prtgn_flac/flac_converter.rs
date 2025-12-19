@@ -69,7 +69,7 @@ pub fn prtgn_to_flac(filename: String) -> Result<(), Box<dyn std::error::Error>>
         filename_prtgn.push_str(".prtgn_flac");
     }
 
-    let decoded_string = read(filename_prtgn)?;
+    let decoded_string = read(filename_prtgn.clone())?;
 
     let parts: Vec<&str> = decoded_string.splitn(3, ' ').collect();
     if parts.len() < 3 {
@@ -110,7 +110,7 @@ pub fn prtgn_to_flac(filename: String) -> Result<(), Box<dyn std::error::Error>>
 
     let source = SamplesBuffer::new(channels, sample_rate, samples);
 
-    player(source)?;
+    player(source, filename_prtgn)?;
 
     Ok(())
 }
