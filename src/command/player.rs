@@ -1,6 +1,4 @@
-use rodio::{Decoder, OutputStreamBuilder, Sink, Source, buffer::SamplesBuffer};
-use std::fs::File;
-use std::io::BufReader;
+use rodio::{OutputStreamBuilder, Sink, Source, buffer::SamplesBuffer};
 use std::sync::mpsc;
 use std::thread;
 use std::time::{Duration, Instant};
