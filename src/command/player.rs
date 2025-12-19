@@ -1,4 +1,4 @@
-use rodio::{Decoder, OutputStreamBuilder, Sink, Source};
+use rodio::{Decoder, OutputStreamBuilder, Sink, Source, buffer::SamplesBuffer};
 use std::fs::File;
 use std::io::BufReader;
 use std::sync::mpsc;
@@ -19,12 +19,10 @@ enum PlayerCommand {
     Quit,
 }
 
-pub fn player(filename: String) -> Result<()> {
+pub fn player(source: SamplesBuffer) -> Result<()> {
     let (command_tx, command_rx) = mpsc::channel();
     let (progress_tx, progress_rx) = mpsc::channel();
 
-    let file = File::open(filename.clone())?;
-    let source = Decoder::new(BufReader::new(file))?;
     let sample_rate = source.sample_rate();
     let total_duration = source.total_duration().unwrap_or_default();
 
@@ -32,8 +30,6 @@ pub fn player(filename: String) -> Result<()> {
         let stream_handle = OutputStreamBuilder::open_default_stream()?;
         let sink = Sink::connect_new(&stream_handle.mixer());
 
-        let file = File::open(filename)?;
-        let source = Decoder::new(BufReader::new(file))?;
         sink.append(source);
 
         let mut elapsed_time = Duration::ZERO;

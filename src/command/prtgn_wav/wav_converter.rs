@@ -1,11 +1,11 @@
-use crate::command::prtgn_wav::player::player;
+use crate::command::player::player;
 use hound;
 use prtgn_encoding::{read, write};
 use rodio::{Decoder, Source};
 use std::fs::File;
 use std::io::BufReader;
 use indicatif::{ProgressBar, ProgressStyle};
-
+use rodio::buffer::SamplesBuffer;
 
 pub fn wav_to_prtgn(filename: String) -> Result<(), Box<dyn std::error::Error>> {
 
@@ -105,23 +105,12 @@ pub fn prtgn_to_wav(filename: String) -> Result<(), Box<dyn std::error::Error>> 
         filename_wav.push_str(".wav");
     }
 
-    let spec = hound::WavSpec {
-        channels,
-        sample_rate,
-        bits_per_sample: 32,
-        sample_format: hound::SampleFormat::Float,
-    };
-
-    let mut writer = hound::WavWriter::create(&filename_wav, spec)?;
-    for sample in samples {
-        writer.write_sample(sample)?;
-        pb.inc(1);
-    }
-    writer.finalize()?;
 
     pb.finish_with_message("Now playing..");
 
-    player(filename_wav)?;
+    let source = SamplesBuffer::new(channels, sample_rate, samples);
+
+    player(source)?;
 
     Ok(())
 }

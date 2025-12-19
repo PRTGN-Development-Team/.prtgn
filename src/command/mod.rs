@@ -4,6 +4,7 @@ mod prtgn_init;
 mod prtgn_wav;
 
 mod prtgn_flac;
+mod player;
 
 #[derive(Parser)]
 #[command(author, version, about = "
