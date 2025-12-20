@@ -5,6 +5,7 @@ mod prtgn_wav;
 
 mod prtgn_flac;
 mod player;
+mod prtgn_fox;
 
 #[derive(Parser)]
 #[command(author, version, about = "
@@ -34,6 +35,11 @@ mod player;
     Protogens, Primagens, and Zeniths Outer Reach (ZOR) were created by CoolKoinu.
     All credit for Protogens, Primagens, and ZOR go to them and there team.
 
+
+    -----------------------------------------------------------------
+
+    Project inspired by Generic Purple Protogen (https://www.youtube.com/@genericpurpleprotogen1)
+
 ")]
 struct Cli {
     #[command(subcommand)]
@@ -46,7 +52,7 @@ enum Commands {
     Init {
         filename: String,
     },
-    #[command(about = "Create or playback a .prtgn_wav file")]
+    #[command(about = "Create or playback a .prtgn_wav file | Inspired by ivycomb (https://www.youtube.com/@ivycomb) / Ivycomb Music (https://www.youtube.com/@IvycombMusic) / ANTIHUMAN / ANTIHUMAN Inc")]
     Wav {
         filename: String,
         #[arg(long, action = clap::ArgAction::SetTrue)]
@@ -54,13 +60,17 @@ enum Commands {
         #[arg(long, action = clap::ArgAction::SetTrue)]
         play: bool,
     },
-    #[command(about = "Create or playback a .prtgn_flac file")]
+    #[command(about = "Create or playback a .prtgn_flac file | Inspired by ivycomb (https://www.youtube.com/@ivycomb) / Ivycomb Music (https://www.youtube.com/@IvycombMusic) / ANTIHUMAN / ANTIHUMAN Inc ")]
     Flac {
         filename: String,
         #[arg(long, action = clap::ArgAction::SetTrue)]
         convert: bool,
         #[arg(long, action = clap::ArgAction::SetTrue)]
         play: bool,
+    },
+    #[command(about = "Display a random fox image from the fox.pics api | Inspired by Save A Fox (https://www.youtube.com/@saveafox)")]
+    Fox {
+
     },
 
 }
@@ -84,6 +94,11 @@ pub fn command() {
             println!("Convert : {:?}", convert);
             println!("Play : {:?}", play);
             prtgn_flac::flac(filename.to_string(), convert.to_owned(), play.to_owned());
+        }
+        Some(Commands::Fox {}) => {
+
+            prtgn_fox::fox();
+
         }
         // Some(Commands::Open { filename }) => {
         //     println!("Open: {}", filename);

@@ -80,7 +80,6 @@ pub fn player(source: SamplesBuffer, filename: String) -> Result<()> {
         fetch_metadata(&filename).await
     });
 
-    // color_eyre::install()?; // Removed duplicate call
     let mut terminal = ratatui::init();
 
     let mut picker = Picker::new((8, 16));
@@ -107,14 +106,12 @@ pub fn player(source: SamplesBuffer, filename: String) -> Result<()> {
 
 async fn fetch_metadata(filename: &str) -> (String, String, Option<DynamicImage>) {
     // Simple heuristic to extract title from filename
-    let query_str = std::path::Path::new(filename)
+    let query = std::path::Path::new(filename)
         .file_stem()
         .and_then(|s| s.to_str())
         .unwrap_or(filename);
 
-    let query = query_str.replace('_', " ");
-
-    let query_result = Recording::search(query).execute().await;
+    let query_result = Recording::search(query.to_string()).execute().await;
 
     let mut title = "Unknown Title".to_string();
     let mut artist = "Unknown Artist".to_string();
@@ -131,18 +128,15 @@ async fn fetch_metadata(filename: &str) -> (String, String, Option<DynamicImage>
 
             // Try to fetch cover art if release exists
             if let Some(releases) = &recording.releases {
-                for release in releases {
-                    let cover_art_url = format!("https://coverartarchive.org/release/{}/front", release.id);
-                    if let Ok(response) = reqwest::get(&cover_art_url).await {
-                        if response.status().is_success() {
-                            if let Ok(bytes) = response.bytes().await {
-                                if let Ok(img) = image::load_from_memory(&bytes) {
-                                    cover_art = Some(img);
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                if let Some(release) = releases.first() {
+                     let cover_art_url = format!("https://coverartarchive.org/release/{}/front", release.id);
+                     if let Ok(response) = reqwest::get(&cover_art_url).await {
+                         if let Ok(bytes) = response.bytes().await {
+                             if let Ok(img) = image::load_from_memory(&bytes) {
+                                 cover_art = Some(img);
+                             }
+                         }
+                     }
                 }
             }
         }
