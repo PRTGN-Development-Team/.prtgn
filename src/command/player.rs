@@ -14,7 +14,7 @@ use ratatui::{
 use musicbrainz_rs::entity::recording::Recording;
 use musicbrainz_rs::Search;
 use ratatui_image::picker::Picker;
-use ratatui_image::protocol::Protocol;
+use ratatui_image::protocol::StatefulProtocol;
 use ratatui_image::{Resize, StatefulImage};
 use image::DynamicImage;
 
@@ -80,7 +80,7 @@ pub fn player(source: SamplesBuffer, filename: String) -> Result<()> {
         fetch_metadata(&filename).await
     });
 
-    color_eyre::install()?;
+    // color_eyre::install()?; // Removed duplicate call
     let mut terminal = ratatui::init();
 
     let mut picker = Picker::new((8, 16));
@@ -107,12 +107,14 @@ pub fn player(source: SamplesBuffer, filename: String) -> Result<()> {
 
 async fn fetch_metadata(filename: &str) -> (String, String, Option<DynamicImage>) {
     // Simple heuristic to extract title from filename
-    let query = std::path::Path::new(filename)
+    let query_str = std::path::Path::new(filename)
         .file_stem()
         .and_then(|s| s.to_str())
         .unwrap_or(filename);
 
-    let query_result = Recording::search(query.to_string()).execute().await;
+    let query = query_str.replace('_', " ");
+
+    let query_result = Recording::search(query).execute().await;
 
     let mut title = "Unknown Title".to_string();
     let mut artist = "Unknown Artist".to_string();
@@ -129,15 +131,18 @@ async fn fetch_metadata(filename: &str) -> (String, String, Option<DynamicImage>
 
             // Try to fetch cover art if release exists
             if let Some(releases) = &recording.releases {
-                if let Some(release) = releases.first() {
-                     let cover_art_url = format!("https://coverartarchive.org/release/{}/front", release.id);
-                     if let Ok(response) = reqwest::get(&cover_art_url).await {
-                         if let Ok(bytes) = response.bytes().await {
-                             if let Ok(img) = image::load_from_memory(&bytes) {
-                                 cover_art = Some(img);
-                             }
-                         }
-                     }
+                for release in releases {
+                    let cover_art_url = format!("https://coverartarchive.org/release/{}/front", release.id);
+                    if let Ok(response) = reqwest::get(&cover_art_url).await {
+                        if response.status().is_success() {
+                            if let Ok(bytes) = response.bytes().await {
+                                if let Ok(img) = image::load_from_memory(&bytes) {
+                                    cover_art = Some(img);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -160,7 +165,7 @@ fn run(
 ) -> Result<()> {
     let mut current_progress = (Duration::ZERO, total_duration);
 
-    let mut image_protocol: Option<Box<dyn Protocol>> = if let Some(img) = &cover_art {
+    let mut image_protocol: Option<Box<dyn StatefulProtocol>> = if let Some(img) = &cover_art {
         Some(picker.new_resize_protocol(img.clone()))
     } else {
         None
@@ -204,7 +209,7 @@ fn draw(
     progress: (Duration, Duration),
     track_title: &str,
     artist_name: &str,
-    image_protocol: &mut Option<Box<dyn Protocol>>,
+    image_protocol: &mut Option<Box<dyn StatefulProtocol>>,
 ) {
     let (current_pos, total_duration) = progress;
 
@@ -236,7 +241,7 @@ fn draw(
     // Render Image
     if let Some(protocol) = image_protocol {
         let image = StatefulImage::new(None).resize(Resize::Fit(None));
-        frame.render_stateful_widget(image, content_layout[0], protocol.as_mut());
+        frame.render_stateful_widget(image, content_layout[0], protocol);
     } else {
         let placeholder = Paragraph::new("No Cover Art")
             .block(Block::default().borders(Borders::ALL))
