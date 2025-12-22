@@ -110,7 +110,7 @@ pub fn prtgn_to_flac(filename: String) -> Result<(), Box<dyn std::error::Error>>
 
     let source = SamplesBuffer::new(channels, sample_rate, samples);
 
-    player(source, filename_prtgn)?;
+    player(filename_prtgn)?;
 
     Ok(())
 }
