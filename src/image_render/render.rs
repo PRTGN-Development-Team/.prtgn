@@ -1,295 +1,75 @@
-
-
-mod crossterm;
-
-use std::{env, error::Error, num::Wrapping as w, path::PathBuf, sync::Once, time::Duration};
-
-use image::DynamicImage;
 use ratatui::{
-    Frame, Terminal,
-    backend::Backend,
-    layout::{Constraint, Direction, Layout, Rect},
-    style::{Color, Stylize},
-    text::{Line, Text},
-    widgets::{Block, Borders, Paragraph, Wrap},
+    backend::CrosstermBackend,
+    Terminal, Frame
 };
-use ratatui_image::{
-    Image, Resize, StatefulImage,
-    picker::Picker,
-    protocol::{Protocol, StatefulProtocol},
+use ratatui_image::{picker::Picker, StatefulImage, protocol::StatefulProtocol};
+use std::io::{self, Stdout};
+use crossterm::{
+    event::{self, Event, KeyCode},
+    execute,
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 
-fn main() -> Result<(), Box<dyn Error>> {
-    crate::crossterm::run()?;
+struct App {
+    // We need to hold the render state.
+    image: StatefulProtocol,
+}
+
+pub fn render() -> Result<(), Box<dyn std::error::Error>> {
+    // Setup terminal
+    enable_raw_mode()?;
+    let mut stdout = io::stdout();
+    execute!(stdout, EnterAlternateScreen)?;
+    let backend = CrosstermBackend::new(stdout);
+    let mut terminal = Terminal::new(backend)?;
+
+    // Create a picker.
+    // Use from_query_stdio to detect font size/protocol, fallback to fixed size if it fails.
+    let picker = Picker::from_query_stdio().unwrap_or(Picker::from_fontsize((8, 12)));
+
+    // Load an image with the image crate.
+    let dyn_img = image::ImageReader::open("pipefox.png")?.decode()?;
+
+    // Create the Protocol which will be used by the widget.
+    let image = picker.new_resize_protocol(dyn_img);
+
+    let mut app = App { image };
+
+    // Run the app loop
+    let res = run_app(&mut terminal, &mut app);
+
+    // Restore terminal
+    disable_raw_mode()?;
+    execute!(
+        terminal.backend_mut(),
+        LeaveAlternateScreen
+    )?;
+    terminal.show_cursor()?;
+
+    if let Err(err) = res {
+        println!("{:?}", err)
+    }
+
     Ok(())
 }
 
-static READY: Once = Once::new();
+fn run_app(terminal: &mut Terminal<CrosstermBackend<Stdout>>, app: &mut App) -> io::Result<()> {
+    loop {
+        terminal.draw(|f| ui(f, app))?;
 
-#[derive(Debug)]
-enum ShowImages {
-    All,
-    Fixed,
-    Resized,
-}
-
-struct App {
-    title: String,
-    should_quit: bool,
-    tick_rate: Duration,
-    background: String,
-    split_percent: u16,
-    show_images: ShowImages,
-
-    image_source_path: PathBuf,
-    image_static_offset: (u16, u16),
-
-    picker: Picker,
-    image_source: DynamicImage,
-    image_static: Protocol,
-    image_fit_state: StatefulProtocol,
-    image_crop_state: StatefulProtocol,
-    image_scale_state: StatefulProtocol,
-}
-
-fn size() -> Rect {
-    Rect::new(0, 0, 30, 16)
-}
-
-impl App {
-    pub fn new<B: Backend>(_: &mut Terminal<B>) -> Self {
-        let title = format!(
-            "Demo ({})",
-            env::var("TERM").unwrap_or("unknown".to_string())
-        );
-
-        let image = if env::args().any(|arg| arg == "--tmp-demo-ready") {
-            "./assets/Jenkins.png"
-        } else {
-            "./assets/Ada.png"
-        };
-        let image_source = image::ImageReader::open(image).unwrap().decode().unwrap();
-
-        let mut picker = Picker::from_query_stdio().unwrap();
-        // Set completely transparent background (experimental, only works for iTerm2 and Kitty).
-        picker.set_background_color([0, 0, 0, 0]);
-
-        let image_static = picker
-            .new_protocol(image_source.clone(), size(), Resize::Fit(None))
-            .unwrap();
-        let image_fit_state = picker.new_resize_protocol(image_source.clone());
-        let image_crop_state = picker.new_resize_protocol(image_source.clone());
-        let image_scale_state = picker.new_resize_protocol(image_source.clone());
-
-        let mut background = String::new();
-
-        let mut r: [u64; 2] = [0x8a5cd789635d2dff, 0x121fd2155c472f96];
-        for _ in 0..5_000 {
-            let mut s1 = w(r[0]);
-            let s0 = w(r[1]);
-            let result = s0 + s1;
-            r[0] = s0.0;
-            s1 ^= s1 << 23;
-            r[1] = (s1 ^ s0 ^ (s1 >> 18) ^ (s0 >> 5)).0;
-            let c = match result.0 % 4 {
-                0 => '.',
-                1 => ' ',
-                _ => '…',
-            };
-            background.push(c);
+        if event::poll(std::time::Duration::from_millis(100))? {
+            if let Event::Key(key) = event::read()? {
+                if key.code == KeyCode::Char('q') {
+                    return Ok(());
+                }
+            }
         }
-
-        Self {
-            title,
-            should_quit: false,
-            tick_rate: Duration::from_millis(1000),
-            background,
-            show_images: ShowImages::All,
-            split_percent: 70,
-            picker,
-            image_source,
-            image_source_path: image.into(),
-
-            image_static,
-            image_fit_state,
-            image_crop_state,
-            image_scale_state,
-
-            image_static_offset: (0, 0),
-        }
-    }
-    pub fn on_key(&mut self, c: char) {
-        match c {
-            'q' => {
-                self.should_quit = true;
-            }
-            't' => {
-                self.show_images = match self.show_images {
-                    ShowImages::All => ShowImages::Fixed,
-                    ShowImages::Fixed => ShowImages::Resized,
-                    ShowImages::Resized => ShowImages::All,
-                }
-            }
-            'i' => {
-                let next = self.picker.protocol_type().next();
-                self.picker.set_protocol_type(next);
-                self.reset_images();
-            }
-            'o' => {
-                let path = match self.image_source_path.to_str() {
-                    Some("./assets/Ada.png") => "./assets/Jenkins.png",
-                    Some("./assets/Jenkins.png") => "./assets/NixOS.png",
-                    _ => "./assets/Ada.png",
-                };
-                self.image_source = image::ImageReader::open(path).unwrap().decode().unwrap();
-                self.image_source_path = path.into();
-                self.reset_images();
-            }
-            'H' => {
-                if self.split_percent >= 10 {
-                    self.split_percent -= 10;
-                }
-            }
-            'L' => {
-                if self.split_percent <= 90 {
-                    self.split_percent += 10;
-                }
-            }
-            'h' => {
-                if self.image_static_offset.0 > 0 {
-                    self.image_static_offset.0 -= 1;
-                }
-            }
-            'j' => {
-                self.image_static_offset.1 += 1;
-            }
-            'k' => {
-                if self.image_static_offset.1 > 0 {
-                    self.image_static_offset.1 -= 1;
-                }
-            }
-            'l' => {
-                self.image_static_offset.0 += 1;
-            }
-            _ => {}
-        }
-    }
-
-    fn reset_images(&mut self) {
-        self.image_static = self
-            .picker
-            .new_protocol(self.image_source.clone(), size(), Resize::Fit(None))
-            .unwrap();
-        self.image_fit_state = self.picker.new_resize_protocol(self.image_source.clone());
-        self.image_crop_state = self.picker.new_resize_protocol(self.image_source.clone());
-        self.image_scale_state = self.picker.new_resize_protocol(self.image_source.clone());
-    }
-
-    pub fn on_tick(&mut self) {
-        READY.call_once(|| {
-            // This is normally only set by nixosTest.
-            if env::args().any(|arg| arg == "--tmp-demo-ready") {
-                if let Err(err) = std::fs::File::create("/tmp/demo-ready") {
-                    panic!("{err}");
-                }
-            }
-        });
-    }
-
-    fn render_resized_image(&mut self, f: &mut Frame<'_>, resize: Resize, area: Rect) {
-        let (state, name, color) = match resize {
-            Resize::Fit(_) => (&mut self.image_fit_state, "Fit", Color::Magenta),
-            Resize::Crop(_) => (&mut self.image_crop_state, "Crop", Color::Green),
-            Resize::Scale(_) => (&mut self.image_scale_state, "Scale", Color::Blue),
-        };
-        let block = block(name);
-        let inner_area = block.inner(area);
-        f.render_widget(paragraph(self.background.as_str().bg(color)), inner_area);
-        match self.show_images {
-            ShowImages::Fixed => (),
-            _ => f.render_stateful_widget(StatefulImage::new().resize(resize), inner_area, state),
-        };
-        f.render_widget(block, area);
     }
 }
 
 fn ui(f: &mut Frame<'_>, app: &mut App) {
-    let outer_block = Block::default()
-        .borders(Borders::TOP)
-        .title(app.title.as_str());
-
-    let chunks = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Percentage(app.split_percent),
-            Constraint::Percentage(100 - app.split_percent),
-        ])
-        .split(outer_block.inner(f.area()));
-    f.render_widget(outer_block, f.area());
-
-    let left_chunks = vertical_layout().split(chunks[0]);
-    let right_chunks = vertical_layout().split(chunks[1]);
-
-    let block_left_top = block("Fixed");
-    let area = block_left_top.inner(left_chunks[0]);
-    f.render_widget(
-        paragraph(app.background.as_str()).style(Color::Yellow),
-        area,
-    );
-    f.render_widget(block_left_top, left_chunks[0]);
-    match app.show_images {
-        ShowImages::Resized => {}
-        _ => {
-            let image = Image::new(&app.image_static);
-            // Let it be surrounded by styled text.
-            let offset_area = Rect {
-                x: area.x + 1,
-                y: area.y + 1,
-                width: area.width.saturating_sub(2),
-                height: area.height.saturating_sub(2),
-            };
-            f.render_widget(image, offset_area);
-        }
-    }
-
-    let chunks_left_bottom = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
-        .split(left_chunks[1]);
-
-    app.render_resized_image(f, Resize::Crop(None), chunks_left_bottom[0]);
-    app.render_resized_image(f, Resize::Scale(None), chunks_left_bottom[1]);
-    app.render_resized_image(f, Resize::Fit(None), right_chunks[0]);
-
-    let block_right_bottom = block("Help");
-    let area = block_right_bottom.inner(right_chunks[1]);
-    f.render_widget(
-        paragraph(vec![
-            Line::from("Key bindings:"),
-            Line::from("H/L: resize"),
-            Line::from(format!(
-                "i: cycle image protocols (current: {:?})",
-                app.picker.protocol_type()
-            )),
-            Line::from("o: cycle image"),
-            Line::from(format!("t: toggle ({:?})", app.show_images)),
-            Line::from(format!("Font size: {:?}", app.picker.font_size())),
-        ]),
-        area,
-    );
-    f.render_widget(block_right_bottom, right_chunks[1]);
-}
-
-fn paragraph<'a, T: Into<Text<'a>>>(str: T) -> Paragraph<'a> {
-    Paragraph::new(str).wrap(Wrap { trim: true })
-}
-
-fn vertical_layout() -> Layout {
-    Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
-}
-
-fn block(name: &str) -> Block<'_> {
-    Block::default().borders(Borders::ALL).title(name)
+    // The image widget.
+    let image = StatefulImage::default();
+    // Render with the protocol state.
+    f.render_stateful_widget(image, f.area(), &mut app.image);
 }
