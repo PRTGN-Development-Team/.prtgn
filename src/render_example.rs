@@ -51,7 +51,7 @@ pub fn render() -> Result<(), Box<dyn std::error::Error>> {
     let mut terminal = Terminal::new(backend)?;
 
     // Load an image with the image crate.
-    let dyn_img = image::ImageReader::open("prtgn_logo.ico")?.decode()?;
+    let dyn_img = image::ImageReader::open("../prtgn_logo.ico")?.decode()?;
 
     // Create the Protocol which will be used by the widget.
     let image = picker.new_resize_protocol(dyn_img);
