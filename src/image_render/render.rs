@@ -28,7 +28,7 @@ pub fn render() -> Result<(), Box<dyn std::error::Error>> {
     let picker = Picker::from_query_stdio().unwrap_or(Picker::from_fontsize((8, 12)));
 
     // Load an image with the image crate.
-    let dyn_img = image::ImageReader::open("pipefox.png")?.decode()?;
+    let dyn_img = image::ImageReader::open("prtgn_logo.ico")?.decode()?;
 
     // Create the Protocol which will be used by the widget.
     let image = picker.new_resize_protocol(dyn_img);
