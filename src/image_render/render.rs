@@ -2,8 +2,8 @@ use ratatui::{
     backend::CrosstermBackend,
     Terminal, Frame
 };
-use ratatui_image::{picker::Picker, StatefulImage, protocol::StatefulProtocol};
-use std::io::{self, Stdout};
+use ratatui_image::{picker::{Picker, ProtocolType}, StatefulImage, protocol::StatefulProtocol};
+use std::io::{self, Stdout, Write};
 use crossterm::{
     event::{self, Event, KeyCode},
     execute,
@@ -16,16 +16,39 @@ struct App {
 }
 
 pub fn render() -> Result<(), Box<dyn std::error::Error>> {
+    // Prompt for backend selection
+    println!("Select rendering backend:");
+    println!("1. Auto-detect");
+    println!("2. Kitty");
+    println!("3. Iterm2");
+    println!("4. Sixel");
+    println!("5. Halfblocks");
+    print!("Enter choice (default 1): ");
+    io::stdout().flush()?;
+
+    let mut input = String::new();
+    io::stdin().read_line(&mut input)?;
+    let choice = input.trim();
+
+    let font_size = (8, 12);
+    let mut picker = Picker::from_fontsize(font_size);
+
+    match choice {
+        "2" => picker.set_protocol_type(ProtocolType::Kitty),
+        "3" => picker.set_protocol_type(ProtocolType::Iterm2),
+        "4" => picker.set_protocol_type(ProtocolType::Sixel),
+        "5" => picker.set_protocol_type(ProtocolType::Halfblocks),
+        _ => {
+             picker = Picker::from_query_stdio().unwrap_or(Picker::from_fontsize(font_size));
+        }
+    }
+
     // Setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen)?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
-
-    // Create a picker.
-    // Use from_query_stdio to detect font size/protocol, fallback to fixed size if it fails.
-    let picker = Picker::from_query_stdio().unwrap_or(Picker::from_fontsize((8, 12)));
 
     // Load an image with the image crate.
     let dyn_img = image::ImageReader::open("prtgn_logo.ico")?.decode()?;
