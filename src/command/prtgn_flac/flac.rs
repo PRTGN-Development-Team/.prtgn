@@ -24,8 +24,14 @@ pub fn flac(filename: String, convert: bool, play: bool) {
             }
 
             if !filename_prt.ends_with(".prtgn_flac") {
-                filename_prt.push_str(".prtgn_flac");
-                flac_converter::prtgn_to_flac(filename_prt).unwrap();
+                if filename_prt.ends_with(".flac") {
+                    let filename_prt_strip = filename_prt.strip_suffix(".flac");
+                    flac_converter::prtgn_to_flac(filename_prt_strip.unwrap().to_string()).unwrap();
+                }
+                else {
+                    filename_prt.push_str(".prtgn_flac");
+                    flac_converter::prtgn_to_flac(filename_prt).unwrap();
+                }
             }
 
         }

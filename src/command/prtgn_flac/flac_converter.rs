@@ -21,7 +21,7 @@ pub fn flac_to_prtgn(filename: String) -> Result<(), Box<dyn std::error::Error>>
     let reader = claxon::FlacReader::open(&filename_flac)?;
     let num_samples = reader.streaminfo().samples.unwrap_or(0);
 
-    let pb = ProgressBar::new(num_samples * 2);
+    let pb = ProgressBar::new(num_samples * 4);
     pb.set_style(ProgressStyle::default_bar()
         .template("{spinner:.red} [{elapsed_precise}] [{bar:40.magenta/cyan}] {pos}/{len} ({eta}) {msg}")
         .expect("Failed to set progress bar template")
@@ -110,7 +110,7 @@ pub fn prtgn_to_flac(filename: String) -> Result<(), Box<dyn std::error::Error>>
 
     let source = SamplesBuffer::new(channels, sample_rate, samples);
 
-    player(filename_prtgn)?;
+    player(source, filename_prtgn)?;
 
     Ok(())
 }

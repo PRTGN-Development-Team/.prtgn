@@ -1,4 +1,4 @@
-use crossterm::event::{self, DisableMouseCapture, EnableMouseCapture, Event, MouseEvent, MouseEventKind};
+use crossterm::event::{self, Event};
 use crossterm::terminal::{
     disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
 };
@@ -9,13 +9,10 @@ use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Borders, Paragraph};
 use ratatui::Terminal;
 use std::borrow::Cow;
-use std::{env, path};
-use std::fmt::Display;
-use std::fs;
-use std::io::{self, Write};
+use std::{env};
+use std::io::{self};
 use std::path::PathBuf;
-use std::time::{Duration, Instant};
-use tui_textarea::{CursorMove, Input, Key, TextArea};
+use tui_textarea::{Input, Key, TextArea};
 use prtgn_encoding::{read, write};
 
 macro_rules! error {
@@ -41,18 +38,7 @@ impl Default for SearchBox<'_> {
 }
 
 impl SearchBox<'_> {
-    fn open(&mut self) {
-        self.open = true;
-    }
-
-    fn close(&mut self) {
-        self.open = false;
-        // Remove input for next search. Do not recreate `self.textarea` instance to keep undo history so that users can
-        // restore previous input easily.
-        self.textarea.move_cursor(CursorMove::End);
-        self.textarea.delete_line_by_head();
-    }
-
+    
     fn height(&self) -> u16 {
         if self.open {
             3
@@ -60,35 +46,7 @@ impl SearchBox<'_> {
             0
         }
     }
-
-    fn input(&mut self, input: Input) -> Option<&'_ str> {
-        match input {
-            Input {
-                key: Key::Enter, ..
-            }
-            | Input {
-                key: Key::Char('m'),
-                ctrl: true,
-                ..
-            } => None, // Disable shortcuts which inserts a newline. See `single_line` example
-            input => {
-                let modified = self.textarea.input(input);
-                modified.then(|| self.textarea.lines()[0].as_str())
-            }
-        }
-    }
-
-    fn set_error(&mut self, err: Option<impl Display>) {
-        let b = if let Some(err) = err {
-            Block::default()
-                .borders(Borders::ALL)
-                .title(format!("Search: {}", err))
-                .style(Style::default().fg(Color::Red))
-        } else {
-            Block::default().borders(Borders::ALL).title("Search")
-        };
-        self.textarea.set_block(b);
-    }
+    
 }
 
 struct Buffer<'a> {
