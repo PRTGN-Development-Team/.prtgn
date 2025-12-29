@@ -2,12 +2,11 @@
 name = "prtgn"
 version = "0.3.1"
 edition = "2024"
-documentation = "https://github.com/ExoticDG/.prtgn/wiki"
 readme = "README.md"
 authors = ["ExoticDG"]
 description = "A protogen file extension written in Rust."
-license = "GNU GPLv3"
-repository = "https://github.com/ExoticDG/.prtgn"
+license-file = "LICENSE"
+repository = "https://github.com/PRTGN-Development-Team/.prtgn"
 
 [dependencies]
 crossterm = "0.29.0"
@@ -20,7 +19,6 @@ color-eyre = "0.6.5"
 hound = "3.5.1"
 indicatif = "0.18.3"
 claxon = "0.4.1"
-musicbrainz_rs = "0.12.0"
 ratatui-image = { version = "8.1.1", features = ["crossterm"] }
 image = "0.25.1"
 tokio = { version = "1.40.0", features = ["full"] }
@@ -40,3 +38,10 @@ prtgn = { path = "/usr/bin/prtgn" }
 
 [package.metadata.deb]
 depends = "libasound2-dev"
+
+[package.metadata.wix]
+upgrade-guid = "E6BFD16C-EA15-4324-80EB-985445843D3F"
+path-guid = "A65E54EE-EBE2-49F0-BE96-183DF570F0E1"
+license = false   # We are manually providing wix/License.rtf
+eula = true       # Set to false to suppress EULA dialog if no RTF is available
+# images = [ "wix/product.ico", "wix/banner.bmp", "wix/dialog.bmp" ]
