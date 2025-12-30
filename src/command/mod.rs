@@ -76,6 +76,38 @@ enum Commands {
 }
 
 pub fn command() {
+    let args_vec: Vec<String> = std::env::args().collect();
+    if args_vec.len() == 2 {
+        let arg = &args_vec[1];
+        if !arg.starts_with('-') && !["init", "wav", "flac", "fox"].contains(&arg.as_str()) {
+            let path = std::path::Path::new(arg);
+            if let Some(ext) = path.extension().and_then(|s| s.to_str()) {
+                match ext {
+                    "prtgn" => {
+                        println!("Init: {:?}", arg);
+                        prtgn_init::init(arg.to_string());
+                        return;
+                    }
+                    "prtgn_wav" => {
+                        println!("Wav: {:?}", arg);
+                        println!("Convert : false");
+                        println!("Play : true");
+                        prtgn_wav::wav(arg.to_string(), false, true);
+                        return;
+                    }
+                    "prtgn_flac" => {
+                        println!("Flac: {:?}", arg);
+                        println!("Convert : false");
+                        println!("Play : true");
+                        prtgn_flac::flac(arg.to_string(), false, true);
+                        return;
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+
     let args = Cli::parse();
 
     match &args.command {
@@ -110,4 +142,3 @@ pub fn command() {
         }
     }
 }
-
