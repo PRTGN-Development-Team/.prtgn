@@ -1,13 +1,12 @@
 #define MyAppName "prtgn"
 #define MyAppVersion GetEnv("APP_VERSION")
 ; #define MyAppVersion "9.0.2"
-#define MyAppPublisher "The PRTGN Development Team"
+#define MyAppPublisher "PRTGN Development Team"
 #define MyAppURL "https://github.com/PRTGN-Development-Team/.prtgn"
 #define MyAppExeName "prtgn.exe"
-; #define MyAppAssocName "Protogen File Format"
-; #define MyAppAssocExt ".prtgn"
-#define PrtgnAssocKey StringChange("Protogen File Format", " ", "") + ".prtgn"
-#define PrtgnWAVAssocKey StringChange("Protogen WAV Format", " ", "") + ".prtgn_wav"
+#define PrtgnAssocKey StringChange("PRTGN File Format", " ", "") + ".prtgn"
+#define PrtgnWAVAssocKey StringChange("PRTGN WAV Format", " ", "") + ".prtgn_wav"
+#define PrtgnFLACAssocKey StringChange("PRTGN FLAC Format", " ", "") + ".prtgn_flac"
 
 
 [Setup]
@@ -63,20 +62,20 @@ Source: "target/release/prtgn.exe"; DestDir: "{app}"; Flags: ignoreversion
 Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}"
 
 Root: HKA; Subkey: "Software\Classes\.prtgn\OpenWithProgids"; ValueType: string; ValueName: "{#PrtgnAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
-Root: HKA; Subkey: "Software\Classes\{#PrtgnAssocKey}"; ValueType: string; ValueName: ""; ValueData: "Protogen File Format"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\{#PrtgnAssocKey}"; ValueType: string; ValueName: ""; ValueData: "PRTGN File Format"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\{#PrtgnAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
 Root: HKA; Subkey: "Software\Classes\{#PrtgnAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
 Root: HKA; Subkey: "Software\Classes\.prtgn_wav\OpenWithProgids"; ValueType: string; ValueName: "{#PrtgnWAVAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
-Root: HKA; Subkey: "Software\Classes\{#PrtgnWAVAssocKey}"; ValueType: string; ValueName: ""; ValueData: "Protogen WAV Format"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\{#PrtgnWAVAssocKey}"; ValueType: string; ValueName: ""; ValueData: "PRTGN WAV Format"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\{#PrtgnWAVAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
 Root: HKA; Subkey: "Software\Classes\{#PrtgnWAVAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
+
+Root: HKA; Subkey: "Software\Classes\.prtgn_flac\OpenWithProgids"; ValueType: string; ValueName: "{#PrtgnFLACAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
+Root: HKA; Subkey: "Software\Classes\{#PrtgnFLACAssocKey}"; ValueType: string; ValueName: ""; ValueData: "PRTGN FLAC Format"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\{#PrtgnFLACAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
+Root: HKA; Subkey: "Software\Classes\{#PrtgnFLACAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-
-
-
-
-
