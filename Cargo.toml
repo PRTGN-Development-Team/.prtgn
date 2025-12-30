@@ -43,5 +43,4 @@ depends = "libasound2-dev"
 upgrade-guid = "E6BFD16C-EA15-4324-80EB-985445843D3F"
 path-guid = "A65E54EE-EBE2-49F0-BE96-183DF570F0E1"
 license = false   # We are manually providing wix/License.rtf
-eula = true       # Set to false to suppress EULA dialog if no RTF is available
-# images = [ "wix/product.ico", "wix/banner.bmp", "wix/dialog.bmp" ]
+eula = false       # Set to false to suppress EULA dialog if no RTF is available
