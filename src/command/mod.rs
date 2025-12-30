@@ -97,7 +97,7 @@ pub fn command() {
         }
         Some(Commands::Fox {}) => {
 
-            prtgn_fox::fox();
+            prtgn_fox::fox(false);
 
         }
         // Some(Commands::Open { filename }) => {
