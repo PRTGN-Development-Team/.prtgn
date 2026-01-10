@@ -7,7 +7,7 @@ A Protogen file extension written in Rust.
 > [!CAUTION]
 > 
 >.prtgn, a protogen inspired file extension written in Rust.
->Copyright (C) 2025  PRTGN Development Team
+>Copyright (C) 2026  PRTGN Development Team
 >
 >This program is free software: you can redistribute it and/or modify
 >it under the terms of the GNU General Public License as published by

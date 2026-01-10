@@ -8,39 +8,7 @@ mod player;
 mod prtgn_fox;
 
 #[derive(Parser)]
-#[command(author, version, about = "
-    -----------------------------------------------------------------
-
-    A protogen inspired file extension written in Rust.
-
-    -----------------------------------------------------------------
-
-    .prtgn  Copyright (C) 2025  PRTGN Development Team
-    This program comes with ABSOLUTELY NO WARRANTY.
-    This is free software, and you are welcome to redistribute it
-    under certain conditions.
-
-    Licensed under the GNU General Public License v3.0
-
-    -----------------------------------------------------------------
-
-    Artiy and official PRTGN artwork Copyright (C) 2025 by PRTGN Development Team
-    Licensed under Creative Commons Attribution-NonCommercial 4.0 International.
-    To view a copy of this license, visit https://creativecommons.org/licenses/by-nc/4.0/
-
-    PRTGN Official artwork can be found at this repo : https://github.com/PRTGN-Development-Team/PRTGN_Artwork
-
-    -----------------------------------------------------------------
-
-    Protogens, Primagens, and Zeniths Outer Reach (ZOR) were created by CoolKoinu.
-    All credit for Protogens, Primagens, and ZOR go to them and there team.
-
-
-    -----------------------------------------------------------------
-
-    Project inspired by Generic Purple Protogen (https://www.youtube.com/@genericpurpleprotogen1)
-
-")]
+#[command(author, version, about = include_str!("about.ansi"))]
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
