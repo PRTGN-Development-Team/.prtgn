@@ -1,12 +1,12 @@
 # .prtgn
 
-A Protogen file extension written in Rust. 
+A protogen CLI resource. 
 
 ![.prtgn logo](https://github.com/PRTGN-Development-Team/.prtgn/blob/b8513ab7eab12692378fa95eada18cb786817ed9/Artiy_The_PRTGN_Protogen/prtgn_logo_colour.png)
 
 > [!CAUTION]
 > 
->.prtgn, a protogen inspired file extension written in Rust.
+>.prtgn, A protogen CLI resource. 
 >Copyright (C) 2026  PRTGN Development Team
 >
 >This program is free software: you can redistribute it and/or modify
