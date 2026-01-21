@@ -6,7 +6,7 @@ use ratatui::backend::CrosstermBackend;
 use ratatui::layout::{Constraint, Direction, Layout};
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
-use ratatui::widgets::{Block, Borders, Paragraph};
+use ratatui::widgets::{Paragraph};
 use ratatui::Terminal;
 use std::borrow::Cow;
 use std::{env};
@@ -19,34 +19,6 @@ macro_rules! error {
     ($fmt: expr $(, $args:tt)*) => {{
         Err(io::Error::new(io::ErrorKind::Other, format!($fmt $(, $args)*)))
     }};
-}
-
-struct SearchBox<'a> {
-    textarea: TextArea<'a>,
-    open: bool,
-}
-
-impl Default for SearchBox<'_> {
-    fn default() -> Self {
-        let mut textarea = TextArea::default();
-        textarea.set_block(Block::default().borders(Borders::ALL).title("Search"));
-        Self {
-            textarea,
-            open: false,
-        }
-    }
-}
-
-impl SearchBox<'_> {
-    
-    fn height(&self) -> u16 {
-        if self.open {
-            3
-        } else {
-            0
-        }
-    }
-    
 }
 
 struct Buffer<'a> {
@@ -71,7 +43,7 @@ impl Buffer<'_> {
             }
         } else {
             TextArea::default() // File does not exist
-        };
+        };*
         textarea.set_line_number_style(Style::default().fg(Color::DarkGray));
         let path = if path.is_absolute() {
             path
@@ -91,7 +63,6 @@ struct Editor<'a> {
     buffers: Vec<Buffer<'a>>,
     term: Terminal<CrosstermBackend<io::Stdout>>,
     message: Option<Cow<'static, str>>,
-    search: SearchBox<'a>,
 }
 
 impl Editor<'_> {
@@ -114,18 +85,15 @@ impl Editor<'_> {
             buffers,
             term,
             message: None,
-            search: SearchBox::default(),
         })
     }
 
     fn run(&mut self) -> io::Result<()> {
         loop {
-            let search_height = self.search.height();
             let layout = Layout::default()
                 .direction(Direction::Vertical)
                 .constraints(
                     [
-                        Constraint::Length(search_height),
                         Constraint::Min(1),
                         Constraint::Length(1),
                         Constraint::Length(1),
@@ -136,13 +104,9 @@ impl Editor<'_> {
             self.term.draw(|f| {
                 let chunks = layout.split(f.area());
 
-                if search_height > 0 {
-                    f.render_widget(&self.search.textarea, chunks[0]);
-                }
-
                 let buffer = &self.buffers[self.current];
                 let textarea = &buffer.textarea;
-                f.render_widget(textarea, chunks[1]);
+                f.render_widget(textarea, chunks[0]);
 
                 // Render status line
                 let modified = if buffer.modified { " [modified]" } else { "" };
@@ -160,7 +124,7 @@ impl Editor<'_> {
                         ]
                             .as_ref(),
                     )
-                    .split(chunks[2]);
+                    .split(chunks[1]);
                 let status_style = Style::default().add_modifier(Modifier::REVERSED);
                 f.render_widget(Paragraph::new(slot).style(status_style), status_chunks[0]);
                 f.render_widget(Paragraph::new(path).style(status_style), status_chunks[1]);
@@ -169,24 +133,6 @@ impl Editor<'_> {
                 // Render message at bottom
                 let message = if let Some(message) = &self.message {
                     Line::from(Span::raw(message.as_ref()))
-                } else if search_height > 0 {
-                    Line::from(vec![
-                        Span::raw("Press "),
-                        Span::styled("Enter", Style::default().add_modifier(Modifier::BOLD)),
-                        Span::raw(" to jump to first match and close, "),
-                        Span::styled("Esc", Style::default().add_modifier(Modifier::BOLD)),
-                        Span::raw(" to close, "),
-                        Span::styled(
-                            "^G or ↓ or ^N",
-                            Style::default().add_modifier(Modifier::BOLD),
-                        ),
-                        Span::raw(" to search next, "),
-                        Span::styled(
-                            "M-G or ↑ or ^P",
-                            Style::default().add_modifier(Modifier::BOLD),
-                        ),
-                        Span::raw(" to search previous"),
-                    ])
                 } else {
                     Line::from(vec![
                         Span::raw("Press "),
@@ -194,13 +140,11 @@ impl Editor<'_> {
                         Span::raw(" to quit, "),
                         Span::styled("^S", Style::default().add_modifier(Modifier::BOLD)),
                         Span::raw(" to save, "),
-                        // Span::styled("^G", Style::default().add_modifier(Modifier::BOLD)),
-                        // Span::raw(" to search, "),
                         Span::styled("^T", Style::default().add_modifier(Modifier::BOLD)),
                         Span::raw(" to switch buffer"),
                     ])
                 };
-                f.render_widget(Paragraph::new(message), chunks[3]);
+                f.render_widget(Paragraph::new(message), chunks[2]);
             })?;
 
             self.message = None;

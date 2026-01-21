@@ -1,3 +1,4 @@
+use colored;
 pub fn fox(rerun: bool) {
     let rt = tokio::runtime::Runtime::new().unwrap();
     let client = reqwest::Client::new();
@@ -6,12 +7,15 @@ pub fn fox(rerun: bool) {
     let mut forced_protocol = None;
 
     if !rerun {
+        println!("----------------------------------------------");
+        println!("Press 'q' to quit. Press 'r' to get new image.");
+        println!("----------------------------------------------");
         println!("Select rendering backend:");
-        println!("1. Auto-detect");
-        println!("2. Kitty");
-        println!("3. Iterm2");
-        println!("4. Sixel");
-        println!("5. Halfblocks");
+        println!("{} {}", "1.".color("cyan").bold(), "Auto-detect".color("magenta"));
+        println!("{}. Kitty", "2.".cyan());
+        println!("{}. Iterm2", "3.".cyan());
+        println!("{}. Sixel", "4.".cyan());
+        println!("{}. Halfblocks", "5.".cyan());
         print!("Enter choice (default 1): ");
         let _ = io::stdout().flush();
 
@@ -34,7 +38,7 @@ pub fn fox(rerun: bool) {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend).unwrap();
 
-    let mut picker = Picker::from_query_stdio().unwrap_or(Picker::from_fontsize(font_size));
+    let mut picker = Picker::from_query_stdio().unwrap_or(Picker::halfblocks());
     if let Some(protocol) = forced_protocol {
         picker.set_protocol_type(protocol);
     }
@@ -79,12 +83,10 @@ async fn fetch(client: &reqwest::Client) -> Result<Vec<u8>, Box<dyn std::error::
 
     let url = "https://api.fox.pics/v1/get-random-foxes?amount=1";
 
-    //eprintln!("Fetching {url:?}...");
-
     let res = client.get(url).send().await?;
 
-    // eprintln!("Response: {:?} {}", res.version(), res.status());
-    // eprintln!("Headers: {:#?}\n", res.headers());
+    // println!("Response: {:?} {}", res.version(), res.status());
+    // println!("Headers: {:#?}\n", res.headers());
 
     let body = res.text().await?;
 
@@ -93,7 +95,6 @@ async fn fetch(client: &reqwest::Client) -> Result<Vec<u8>, Box<dyn std::error::
     chars.next_back();
     chars.next();
     chars.next_back();
-
 
     // println!("{}", chars.as_str().to_string());
 
@@ -125,6 +126,7 @@ use ratatui::{
 };
 use ratatui_image::{picker::{Picker, ProtocolType}, StatefulImage, protocol::StatefulProtocol};
 use std::io::{self, Stdout, Write};
+use colored::Colorize;
 use crossterm::{
     event::{self, Event, KeyCode},
     execute,
@@ -144,7 +146,7 @@ pub fn render(terminal: &mut Terminal<CrosstermBackend<Stdout>>, image_data: &[u
     // Create the Protocol which will be used by the widget.
     let image = picker.new_resize_protocol(dyn_img);
 
-    let mut app = App { image };
+    let mut app = App {image};
 
     // Run the app loop
     let res = run_app(terminal, &mut app);
