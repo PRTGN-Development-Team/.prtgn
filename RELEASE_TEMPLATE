@@ -1,6 +1,6 @@
 # .prtgn v<version>
 
-A Protogen based file extension written in Rust.
+A protogen CLI resource. 
 
 ## Changelog
 
@@ -24,4 +24,5 @@ A Protogen based file extension written in Rust.
 ### Microsoft Windows (Built for 11 but should work elsewhere)
 
 1. Download and install the Windows Executable (.exe) file. Make sure you have the right processor type. (x86_64 or Aarm64)
+
 
