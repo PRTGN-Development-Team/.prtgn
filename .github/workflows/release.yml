@@ -183,11 +183,14 @@ jobs:
     - name: Install dependencies
       run: |
         sudo dpkg --add-architecture arm64
-        sudo apt install -y gcc-aarch64-linux-gnu libasound2-dev pkg-config
+        sudo apt-get update
+        sudo apt-get install -y gcc-aarch64-linux-gnu libasound2-dev:arm64 pkg-config
 
     - name: Build for Debian (ARM)
       run: |
         export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
+        export PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig
+        export PKG_CONFIG_ALLOW_CROSS=1
         cargo deb --target aarch64-unknown-linux-gnu --output target/debian/prtgn_v${{ needs.get-version.outputs.version }}_aarch64.deb
 
     - name: Upload Debian ARM Artifact
@@ -263,11 +266,14 @@ jobs:
     - name: Install dependencies
       run: |
         sudo dpkg --add-architecture arm64
-        sudo apt install -y gcc-aarch64-linux-gnu libasound2-dev pkg-config
+        sudo apt-get update
+        sudo apt-get install -y gcc-aarch64-linux-gnu libasound2-dev:arm64 pkg-config
 
     - name: Build for Fedora (RPM, ARM)
       run: |
         export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
+        export PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig
+        export PKG_CONFIG_ALLOW_CROSS=1
         cargo rpm build --target aarch64-unknown-linux-gnu
 
     - name: Rename RPM package
