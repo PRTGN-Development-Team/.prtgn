@@ -1,4 +1,5 @@
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, CommandFactory, FromArgMatches};
+use colored::Colorize;
 
 mod prtgn_init;
 mod prtgn_wav;
@@ -7,8 +8,51 @@ mod prtgn_flac;
 mod player;
 mod prtgn_fox;
 
+fn get_about() -> String {
+    let art = format!(
+        "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
+        "             ++++++++++++++++++++".red(),
+        "          +÷÷÷÷××××××××××××××××÷÷÷÷++".red(),
+        "        +-÷÷÷××××××××××××××××××××÷÷÷×+".red(),
+        "      +-÷÷÷××××××××××××××××××××××××÷÷÷++".red(),
+        "    ++÷÷÷×××××××××÷÷÷÷÷÷÷××××××××××××÷÷÷++".red(),
+        "  ++÷÷÷×××××××××÷÷÷÷+÷÷÷÷÷÷÷÷÷÷×××××××÷÷÷÷++".red(),
+        " +÷÷÷××××××××××÷÷÷++   +++++-÷÷÷÷×××××××÷÷÷÷++".red(),
+        " +÷÷×××××××××÷÷÷++            ++÷÷××××××××÷÷++".red(),
+        format!("{}{}{}", " +÷÷×××××××÷÷÷-+   ".red(), "+∞√√√∞++".cyan(), "    +÷÷×××××××××÷++".red()),
+        format!("{}{}{}", " +÷÷××××××÷÷×++  ".red(), "+≈√√√√ππ√π√".cyan(), "   +×÷÷÷×××××××÷++".red()),
+        format!("{}{}{}", " +÷÷××××÷÷÷÷++  ".red(), "∞√√√ππππππ√π+".cyan(), "    +×÷÷÷×××××÷++".red()),
+        format!("{}{}{}", " +÷÷××÷÷÷÷++    ".red(), "+∞√√ππ√πππ√√√+".cyan(), "    ++×÷÷÷×××÷++".red()),
+        format!("{}{}{}", " +÷÷÷÷÷÷++       ".red(), "+π√√ππππ√√√√+".cyan(), "      ++÷÷÷÷×÷++".red()),
+        format!("{}{}{}", " +÷÷÷×++    +++   ".red(), "∞√ππ√√√√√+".cyan(), "   ++     ++×÷÷÷++".red()),
+        format!("{}{}{}", " +÷÷+      +÷÷++     ".red(), "++≈∞+".cyan(), "   ++÷÷÷++     +×÷++".red()),
+        " +++    ++×÷÷÷÷++++        ++÷÷÷÷÷÷÷++    ++++".red(),
+        "      ++-÷÷÷××÷÷÷÷÷÷×++++++÷÷÷÷×××÷÷÷÷++".red(),
+        "     +÷÷÷÷××××××××÷÷÷÷÷÷÷÷÷÷÷×××××××÷÷÷÷++".red(),
+        "     +×÷÷÷×××××××××××××××÷××××××××××÷÷÷÷+".red(),
+        "       +×÷÷÷××××××××××××××××××××××÷÷÷÷++".red(),
+        "        ++÷÷÷÷×××××××××××××××××××÷÷÷++".red(),
+        "            ++÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷++".red()
+    );
+
+    let separator = "-----------------------------------------------------------------".cyan();
+
+    format!(
+        "{}\n\n    {}\n\n    {}\n\n    {}\n\n    {}  Copyright (C) 2026  PRTGN Development Team\n    This program comes with ABSOLUTELY NO WARRANTY.\n    This is free software, and you are welcome to redistribute it\n    under certain conditions.\n\n    Licensed under the GNU General Public License v3.0\n\n    {}\n\n    Artiy and official PRTGN artwork Copyright (C) 2025 by PRTGN Development Team\n    Licensed under Creative Commons Attribution-NonCommercial 4.0 International.\n    To view a copy of this license, visit https://creativecommons.org/licenses/by-nc/4.0/\n\n    PRTGN Official artwork can be found at this repo : https://github.com/PRTGN-Development-Team/PRTGN_Artwork\n\n    {}\n\n    Protogens, Primagens, and Zeniths Outer Reach (ZOR) were created by CoolKoinu.\n    All credit for Protogens, Primagens, and ZOR go to them and there team.\n\n\n    {}\n\n    Project inspired by Generic Purple Protogen (https://www.youtube.com/@genericpurpleprotogen1)\n\n    {}",
+        art,
+        separator,
+        "A protogen CLI resource.".bold(),
+        separator,
+        ".prtgn".green(),
+        separator,
+        separator,
+        separator,
+        separator
+    )
+}
+
 #[derive(Parser)]
-#[command(author, version, about = include_str!("about.ansi"))]
+#[command(author, version)]
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
@@ -76,7 +120,8 @@ pub fn command() {
         }
     }
 
-    let args = Cli::parse();
+    let matches = Cli::command().about(get_about()).get_matches();
+    let args = Cli::from_arg_matches(&matches).expect("Failed to parse args");
 
     match &args.command {
         Some(Commands::Init { filename }) => {

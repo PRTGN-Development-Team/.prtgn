@@ -43,7 +43,7 @@ impl Buffer<'_> {
             }
         } else {
             TextArea::default() // File does not exist
-        };*
+        };
         textarea.set_line_number_style(Style::default().fg(Color::DarkGray));
         let path = if path.is_absolute() {
             path
@@ -92,7 +92,7 @@ impl Editor<'_> {
         loop {
             let layout = Layout::default()
                 .direction(Direction::Vertical)
-                .constraints(
+                .constraints::<&[Constraint]>(
                     [
                         Constraint::Min(1),
                         Constraint::Length(1),
@@ -116,7 +116,7 @@ impl Editor<'_> {
                 let cursor = format!("({},{})", row + 1, col + 1);
                 let status_chunks = Layout::default()
                     .direction(Direction::Horizontal)
-                    .constraints(
+                    .constraints::<&[Constraint]>(
                         [
                             Constraint::Length(slot.len() as u16),
                             Constraint::Min(1),
