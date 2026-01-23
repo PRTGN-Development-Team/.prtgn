@@ -183,7 +183,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo dpkg --add-architecture arm64
-        sudo apt install -y gcc-aarch64-linux-gnu libasound2-dev
+        sudo apt install -y gcc-aarch64-linux-gnu libasound2-dev pkg-config
 
     - name: Build for Debian (ARM)
       run: |
@@ -263,7 +263,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo dpkg --add-architecture arm64
-        sudo apt install -y gcc-aarch64-linux-gnu libasound2-dev
+        sudo apt install -y gcc-aarch64-linux-gnu libasound2-dev pkg-config
 
     - name: Build for Fedora (RPM, ARM)
       run: |
