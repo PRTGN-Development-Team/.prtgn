@@ -11,7 +11,6 @@ A protogen CLI resource.
 >[!NOTE]
 >PRTGN_Wav uses Rodio to play sound. Rodio used the `cpal` library to send audio to the OS. 'ALSA' development files are needed to build 'cpal' on Linux. These are provided as part of the 'libasound2-dev' package on Debian and Ubuntu distributions and 'alsa-lib-devel' on Fedora.
 >
->PRTGN_Fox uses Ratatui Image to display images. Ratatui Image needs the 'libchafa-dev' dependency on Debian/Ubuntu/Windows or 'chafa-devel' on Fedora. Find it here 'https://hpjansson.org/chafa/download/'
 
 ### Debian Based Linux (Ubuntu variations, Raspberry Pi OS, Debian (obviously), e.t.c.)
 

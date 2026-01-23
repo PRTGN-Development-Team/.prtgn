@@ -1,4 +1,6 @@
 name: Release
+permissions:
+  contents: read
 
 on:
   push:
@@ -66,6 +68,8 @@ jobs:
       - name: Get the version from Cargo.toml
         id: get_version
         run: echo "VERSION=$(grep '^version' Cargo.toml | head -n 1 | cut -d '"' -f 2)" >> $GITHUB_OUTPUT
+    permissions:
+      contents: read
 
   windows-release:
     runs-on: windows-latest
@@ -143,7 +147,7 @@ jobs:
         toolchain: stable
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libasound2-dev
+      run: sudo apt-get install libasound2-dev
 
     - name: Install cargo-deb
       run: cargo install cargo-deb
@@ -179,8 +183,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo dpkg --add-architecture arm64
-        sudo apt-get update
-        sudo apt-get install -y gcc-aarch64-linux-gnu libasound2-dev:arm64
+        sudo apt install -y gcc-aarch64-linux-gnu libasound2-dev:arm64
 
     - name: Build for Debian (ARM)
       run: |
@@ -209,7 +212,7 @@ jobs:
         toolchain: stable
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libasound2-dev
+      run: sudo apt-get install libasound2-dev
 
     - name: Install cargo-rpm
       run: cargo install cargo-rpm
@@ -260,8 +263,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo dpkg --add-architecture arm64
-        sudo apt-get update
-        sudo apt-get install -y gcc-aarch64-linux-gnu libasound2-dev:arm64
+        sudo apt install -y gcc-aarch64-linux-gnu libasound2-dev:arm64
 
     - name: Build for Fedora (RPM, ARM)
       run: |
