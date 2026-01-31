@@ -18,6 +18,8 @@ mod prtgn_flac;
 mod player;
 mod prtgn_fox;
 
+mod prtgn_wiki;
+
 fn get_about() -> String {
     let art = format!(
         "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
@@ -94,6 +96,10 @@ enum Commands {
     Fox {
 
     },
+    #[command(about = "Get information from an available wiki.")]
+    Wiki {
+
+    },
 
 }
 
@@ -153,6 +159,11 @@ pub fn command() {
         Some(Commands::Fox {}) => {
 
             prtgn_fox::fox(false);
+
+        }
+        Some(Commands::Wiki {}) => {
+
+            prtgn_wiki::selection().unwrap();
 
         }
         // Some(Commands::Open { filename }) => {
