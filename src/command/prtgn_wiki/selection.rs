@@ -21,6 +21,8 @@ use ratatui::widgets::{
 };
 use ratatui::{DefaultTerminal, symbols};
 
+use crate::command::prtgn_wiki::search;
+
 const WIKI_HEADER_STYLE: Style = Style::new().fg(SLATE.c100).bg(BLUE.c800);
 const NORMAL_ROW_BG: Color = SLATE.c950;
 const ALT_ROW_BG_COLOR: Color = SLATE.c900;
@@ -51,15 +53,16 @@ struct WikiList {
 
 #[derive(Debug)]
 struct WikiItem {
+    status: Status,
     wiki: String,
     info: String,
-    status: Status,
+    url: String,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 enum Status {
-    Wiki,
-    Completed,
+    Unselected,
+    Selected,
 }
 
 impl Default for App {
@@ -68,57 +71,71 @@ impl Default for App {
             should_exit: false,
             wiki_list: WikiList::from_iter([
                 (
-                    Status::Wiki,
-                    "Rewrite everything with Rust!",
-                    "I can't hold my inner voice. He tells me to rewrite the complete universe with Rust",
+                    Status::Unselected,
+                    "Ivycomb Wiki | MediaWiki | wiki.ivy.cm",
+                    "This wiki serves as the de-facto source for proven information (and occasional theories) on ivycomb's various projects, ranging from music, to Cosmic Critters and Antihuman, to general character and meta information. \n\nThis wiki is officially endorsed by and owned by ivycomb, but pages are edited and maintained by the community with limited input from the original creators.",
+                    "https://wiki.ivy.cm/w/api.php?",
                 ),
                 (
-                    Status::Completed,
-                    "Rewrite all of your tui apps with Ratatui",
-                    "Yes, you heard that right. Go and replace your tui with Ratatui.",
+                    Status::Unselected,
+                    "Alterhumanity Wiki | Fandom | alterhumanity.fandom.com",
+                    "Alterhumanity is a fandom wiki created by Humanwingz, This fandom wiki was created for the purpose of explaining Alterhuman terms, creating new Alterhuman terms, and created to shed light on Alterhumanity as a whole to the public.",
+                    "https://alterhumanity.fandom.com/api.php?",
                 ),
                 (
-                    Status::Wiki,
-                    "Pet your cat",
-                    "Minnak loves to be pet by you! Don't forget to pet and give some treats!",
+                    Status::Unselected,
+                    "Alterhuman Wiki | MediaWiki | alterhuman.miraheze.org",
+                    "This is a wiki for all things alterhuman, or alternative to the common societal idea of humanity. Alterhuman includes, but is not limited to, therianthropy, otherkin, fictionkin, otherhearted, otherlink, plurality, and more. \n\nThis wik is dedicated to storing information on various alterhuman labels and the history of the alterhuman community as well as alterhuman symbols, flags, and other imagery. Alterhuman-adjacent topics are also welcome.",
+                    "https://alterhuman.miraheze.org/w/api.php?",
                 ),
                 (
-                    Status::Wiki,
-                    "Walk with your dog",
-                    "Max is bored, go walk with him!",
+                    Status::Unselected,
+                    "LGBTQIA+ Wiki | MediaWiki | lgbtqia.wiki",
+                    "The LGBTQIA+ Wiki is a resource of LGBTQIA+ terminology and labels used by various queer communities, as well as the questioning and/or curious. The wiki is designed to be a helpful resource for explaining identities that are often unknown, unheard of, or difficult to find information for.",
+                    "https://lgbtqia.wiki/w/api.php",
                 ),
                 (
-                    Status::Completed,
-                    "Pay the bills",
-                    "Pay the train subscription!!!",
+                    Status::Unselected,
+                    "New LGBTQIA+ Wiki | MediaWiki | new.lgbtqia.wiki",
+                    "The LGBTQIA+ Wiki is a resource of LGBTQIA+ terminology and labels used by various queer communities, as well as the questioning and/or curious. The wiki is designed to be a helpful resource for explaining identities both known and unknown.",
+                    "https://new.lgbtqia.wiki/w139/api.php?",
                 ),
                 (
-                    Status::Completed,
-                    "Refactor list example",
-                    "If you see this info that means I completed this task!",
+                    Status::Unselected,
+                    "Wikipedia | MediaWiki | wikipedia.org",
+                    "The free encyclopedia that anyone can edit.",
+                    "https://en.wikipedia.org/w/api.php",
+                ),
+                (
+                    Status::Unselected,
+                    "Wiktionary | MediaWiki | wiktionary.org",
+                    "Welcome to the English-language Wiktionary, a collaborative project to produce a free-content multilingual dictionary. It aims to describe all words of all languages using definitions and descriptions in English.",
+                    "https://en.wiktionary.org/w/api.php",
                 ),
             ]),
         }
     }
 }
 
-impl FromIterator<(Status, &'static str, &'static str)> for WikiList {
-    fn from_iter<I: IntoIterator<Item = (Status, &'static str, &'static str)>>(iter: I) -> Self {
-        let items = iter
+impl FromIterator<(Status, &'static str, &'static str, &'static str)> for WikiList {
+    fn from_iter<I: IntoIterator<Item = (Status, &'static str, &'static str, &'static str)>>(iter: I) -> Self {
+        let mut items: Vec<WikiItem> = iter
             .into_iter()
-            .map(|(status, wiki, info)| WikiItem::new(status, wiki, info))
+            .map(|(status, wiki, info, url)| WikiItem::new(status, wiki, info, url))
             .collect();
+        items.sort_by(|a, b| a.wiki.cmp(&b.wiki));
         let state = ListState::default();
         Self { items, state }
     }
 }
 
 impl WikiItem {
-    fn new(status: Status, wiki: &str, info: &str) -> Self {
+    fn new(status: Status, wiki: &str, info: &str, url: &str) -> Self {
         Self {
             status,
             wiki: wiki.to_string(),
             info: info.to_string(),
+            url:  url.to_string(),
         }
     }
 }
@@ -137,13 +154,13 @@ impl App {
     fn handle_key(&mut self, key: KeyEvent) {
         match key.code {
             KeyCode::Char('q') | KeyCode::Esc => self.should_exit = true,
-            KeyCode::Char('h') | KeyCode::Left => self.select_none(),
-            KeyCode::Char('j') | KeyCode::Down => self.select_next(),
-            KeyCode::Char('k') | KeyCode::Up => self.select_previous(),
+            KeyCode::Char('a') | KeyCode::Left => self.select_none(),
+            KeyCode::Char('s') | KeyCode::Down => self.select_next(),
+            KeyCode::Char('w') | KeyCode::Up => self.select_previous(),
             KeyCode::Char('g') | KeyCode::Home => self.select_first(),
             KeyCode::Char('G') | KeyCode::End => self.select_last(),
-            KeyCode::Char('l') | KeyCode::Right | KeyCode::Enter => {
-                self.toggle_status();
+            KeyCode::Char('d') | KeyCode::Right | KeyCode::Enter => {
+                self.select();
             }
             _ => {}
         }
@@ -169,15 +186,55 @@ impl App {
     }
 
     /// Changes the status of the selected list item
-    fn toggle_status(&mut self) {
-        if let Some(i) = self.wiki_list.state.selected() {
-            self.wiki_list.items[i].status = match self.wiki_list.items[i].status {
-                Status::Completed => Status::Wiki,
-                Status::Wiki => Status::Completed,
-            }
-        }
+    fn select(&mut self) {
+        // if let Some(i) = self.wiki_list.state.selected() {
+        //     self.wiki_list.items[i].status = match self.wiki_list.items[i].status {
+        //         Status::Selected => Status::Unselected,
+        //         Status::Unselected => Status::Selected,
+        //     }
+        // }
+
+        // fetch(self.wiki_list.items[0].url.clone());
+
+        search().unwrap();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// --------------------------------------------------
+// --------------------------------------------------
+// --------------------------------------------------
+// --------------------------------------------------
+
+
+
+
+
+
+
 
 impl Widget for &mut App {
     fn render(self, area: Rect, buf: &mut Buffer) {
@@ -249,8 +306,8 @@ impl App {
         // We get the info depending on the item's state.
         let info = if let Some(i) = self.wiki_list.state.selected() {
             match self.wiki_list.items[i].status {
-                Status::Completed => format!("✓ DONE: {}", self.wiki_list.items[i].info),
-                Status::Wiki => format!("☐ WIKI: {}", self.wiki_list.items[i].info),
+                Status::Selected => format!("{}", self.wiki_list.items[i].info),
+                Status::Unselected => format!("{}", self.wiki_list.items[i].info),
             }
         } else {
             "Nothing selected...".to_string()
@@ -285,8 +342,8 @@ const fn alternate_colors(i: usize) -> Color {
 impl From<&WikiItem> for ListItem<'_> {
     fn from(value: &WikiItem) -> Self {
         let line = match value.status {
-            Status::Wiki => Line::styled(format!(" ☐ {}", value.wiki), TEXT_FG_COLOR),
-            Status::Completed => {
+            Status::Unselected => Line::styled(format!(" ☐ {}", value.wiki), TEXT_FG_COLOR),
+            Status::Selected => {
                 Line::styled(format!(" ✓ {}", value.wiki), COMPLETED_TEXT_FG_COLOR)
             }
         };

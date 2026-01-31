@@ -13,3 +13,6 @@ pub use selection::*;
 
 mod fetch;
 pub use fetch::*;
+
+mod search;
+pub use search::*;
