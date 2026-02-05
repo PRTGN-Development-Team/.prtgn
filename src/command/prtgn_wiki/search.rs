@@ -21,11 +21,8 @@ use ratatui::{
 use tui_input::backend::crossterm::EventHandler;
 use tui_input::Input;
 
-pub fn search() -> io::Result<()> {
-    let mut terminal = ratatui::init();
-    let result = App::default().run(&mut terminal);
-    ratatui::restore();
-    result
+pub fn search(terminal: &mut DefaultTerminal) -> io::Result<()> {
+    App::default().run(terminal)
 }
 
 /// App holds the state of the application

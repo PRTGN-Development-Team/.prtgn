@@ -92,7 +92,7 @@ impl Default for App {
                     Status::Unselected,
                     "LGBTQIA+ Wiki | MediaWiki | lgbtqia.wiki",
                     "The LGBTQIA+ Wiki is a resource of LGBTQIA+ terminology and labels used by various queer communities, as well as the questioning and/or curious. The wiki is designed to be a helpful resource for explaining identities that are often unknown, unheard of, or difficult to find information for.",
-                    "https://lgbtqia.wiki/w/api.php",
+                    "https://lgbtqia.wiki/w/api.php?",
                 ),
                 (
                     Status::Unselected,
@@ -104,13 +104,19 @@ impl Default for App {
                     Status::Unselected,
                     "Wikipedia | MediaWiki | wikipedia.org",
                     "The free encyclopedia that anyone can edit.",
-                    "https://en.wikipedia.org/w/api.php",
+                    "https://en.wikipedia.org/w/api.php?",
                 ),
                 (
                     Status::Unselected,
                     "Wiktionary | MediaWiki | wiktionary.org",
                     "Welcome to the English-language Wiktionary, a collaborative project to produce a free-content multilingual dictionary. It aims to describe all words of all languages using definitions and descriptions in English.",
-                    "https://en.wiktionary.org/w/api.php",
+                    "https://en.wiktionary.org/w/api.php?",
+                ),
+                (
+                    Status::Unselected,
+                    "Unlisted | MediaWiki / Fandom | Unknown",
+                    "A place for you to put a MediaWiki or Fandom API of your own. For MediaWiki, It should be formated `<wiki_url>/w/api.php?`. For Fandom, It should be formated `<wiki_url>/api.php`",
+                    "USER_DEFINED",
                 ),
             ]),
         }
@@ -145,13 +151,13 @@ impl App {
         while !self.should_exit {
             terminal.draw(|frame| frame.render_widget(&mut self, frame.area()))?;
             if let Some(key) = event::read()?.as_key_press_event() {
-                self.handle_key(key);
+                self.handle_key(key, terminal);
             }
         }
         Ok(())
     }
 
-    fn handle_key(&mut self, key: KeyEvent) {
+    fn handle_key(&mut self, key: KeyEvent, terminal: &mut DefaultTerminal) {
         match key.code {
             KeyCode::Char('q') | KeyCode::Esc => self.should_exit = true,
             KeyCode::Char('a') | KeyCode::Left => self.select_none(),
@@ -160,7 +166,7 @@ impl App {
             KeyCode::Char('g') | KeyCode::Home => self.select_first(),
             KeyCode::Char('G') | KeyCode::End => self.select_last(),
             KeyCode::Char('d') | KeyCode::Right | KeyCode::Enter => {
-                self.select();
+                self.select(terminal);
             }
             _ => {}
         }
@@ -186,7 +192,7 @@ impl App {
     }
 
     /// Changes the status of the selected list item
-    fn select(&mut self) {
+    fn select(&mut self, terminal: &mut DefaultTerminal) {
         // if let Some(i) = self.wiki_list.state.selected() {
         //     self.wiki_list.items[i].status = match self.wiki_list.items[i].status {
         //         Status::Selected => Status::Unselected,
@@ -196,7 +202,7 @@ impl App {
 
         // fetch(self.wiki_list.items[0].url.clone());
 
-        search().unwrap();
+        search::search(terminal).unwrap();
     }
 }
 
