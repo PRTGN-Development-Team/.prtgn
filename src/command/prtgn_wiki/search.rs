@@ -21,6 +21,8 @@ use ratatui::{
 use tui_input::backend::crossterm::EventHandler;
 use tui_input::Input;
 
+use crate::command::prtgn_wiki::fetch;
+
 pub fn search(terminal: &mut DefaultTerminal) -> io::Result<()> {
     App::default().run(terminal)
 }
@@ -32,8 +34,8 @@ struct App {
     input: Input,
     /// Current input mode
     input_mode: InputMode,
-    /// History of recorded messages
-    messages: Vec<String>,
+    /// Sent Message
+    message: String,
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
@@ -77,11 +79,11 @@ impl App {
     }
 
     fn push_message(&mut self) {
-        self.messages.push(self.input.value_and_reset());
+        self.message()
     }
 
     fn render(&self, frame: &mut Frame) {
-        let [header_area, input_area, messages_area] = Layout::vertical([
+        let [header_area, input_area] = Layout::vertical([
             Constraint::Length(1),
             Constraint::Length(3),
             Constraint::Min(1),
@@ -90,7 +92,7 @@ impl App {
 
         self.render_help_message(frame, header_area);
         self.render_input(frame, input_area);
-        self.render_messages(frame, messages_area);
+        self.fetch_query();
     }
 
     fn render_help_message(&self, frame: &mut Frame, area: Rect) {
@@ -124,7 +126,7 @@ impl App {
         let input = Paragraph::new(self.input.value())
             .style(style)
             .scroll((0, scroll as u16))
-            .block(Block::bordered().title("Input"));
+            .block(Block::bordered().title("Search - Input query here."));
         frame.render_widget(input, area);
 
         if self.input_mode == InputMode::Editing {
@@ -135,13 +137,12 @@ impl App {
         }
     }
 
-    fn render_messages(&self, frame: &mut Frame, area: Rect) {
-        let messages = self
-            .messages
-            .iter()
-            .enumerate()
-            .map(|(i, message)| format!("{}: {}", i, message));
-        let messages = List::new(messages).block(Block::bordered().title("Messages"));
-        frame.render_widget(messages, area);
+    fn fetch_query(&self) {
+        let message = self.message;
+
+        fetch(message);
+
+        // let messages = List::new(messages).block(Block::bordered().title("Messages"));
+        // frame.render_widget(messages, area);
     }
 }
