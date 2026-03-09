@@ -64,7 +64,7 @@ jobs:
       version: ${{ steps.get_version.outputs.VERSION }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Get the version from Cargo.toml
         id: get_version
         run: echo "VERSION=$(grep '^version' Cargo.toml | head -n 1 | cut -d '"' -f 2)" >> $GITHUB_OUTPUT
@@ -79,7 +79,7 @@ jobs:
     if: github.event_name == 'push' || github.event.inputs.exclude_windows_x86_64 == 'no'
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set up Rust
       uses: dtolnay/rust-toolchain@stable
@@ -111,7 +111,7 @@ jobs:
     if: github.event_name == 'push' || github.event.inputs.exclude_windows_aarch64 == 'no'
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set up Rust
       uses: dtolnay/rust-toolchain@stable
@@ -139,7 +139,7 @@ jobs:
     if: github.event_name == 'push' || github.event.inputs.exclude_debian_x86_64 == 'no'
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set up Rust
       uses: dtolnay/rust-toolchain@stable
@@ -169,7 +169,7 @@ jobs:
     if: github.event_name == 'push' || github.event.inputs.exclude_debian_aarch64 == 'no'
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set up Rust
       uses: dtolnay/rust-toolchain@stable
@@ -222,7 +222,7 @@ jobs:
     if: github.event_name == 'push' || github.event.inputs.exclude_fedora_x86_64 == 'no'
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set up Rust
       uses: dtolnay/rust-toolchain@stable
@@ -267,7 +267,7 @@ jobs:
     if: github.event_name == 'push' || github.event.inputs.exclude_fedora_aarch64 == 'no'
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set up Rust
       uses: dtolnay/rust-toolchain@stable
@@ -335,7 +335,7 @@ jobs:
       contents: write
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Download Windows Installer
       if: needs.windows-release.result == 'success'
