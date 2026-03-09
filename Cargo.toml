@@ -17,7 +17,7 @@ rodio = "0.21.1"
 prtgn_encoding = "0.2.0"
 color-eyre = "0.6.5"
 hound = "3.5.1"
-indicatif = "0.18.3"
+indicatif = "0.18.4"
 claxon = "0.4.1"
 ratatui-image = { version = "10.0.3", default-features = false, features = ["crossterm"] }
 image = "0.25.1"
