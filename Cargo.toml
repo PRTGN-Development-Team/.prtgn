@@ -3,10 +3,11 @@ name = "prtgn"
 version = "0.4.1"
 edition = "2024"
 readme = "README.md"
-authors = ["ExoticDG"]
+authors = ["PRTGN Development Team", "ExoticDG"]
 description = "A protogen CLI resource."
 license-file = "LICENSE"
 repository = "https://github.com/PRTGN-Development-Team/.prtgn"
+homepage = "https://github.com/PRTGN-Development-Team/.prtgn"
 
 [dependencies]
 crossterm = "0.29.0"

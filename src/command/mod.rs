@@ -96,10 +96,10 @@ enum Commands {
     Fox {
 
     },
-    #[command(about = "Get information from an available wiki.")]
-    Wiki {
-
-    },
+    // #[command(about = "Get information from an available wiki.")]
+    // Wiki {
+    //
+    // },
 
 }
 
@@ -161,11 +161,11 @@ pub fn command() {
             prtgn_fox::fox(false);
 
         }
-        Some(Commands::Wiki {}) => {
-
-            prtgn_wiki::selection().unwrap();
-
-        }
+        // Some(Commands::Wiki {}) => {
+        //
+        //     prtgn_wiki::selection().unwrap();
+        //
+        // }
         // Some(Commands::Open { filename }) => {
         //     println!("Open: {}", filename);
         //     prtgn_open::open_file(filename.to_string());a
