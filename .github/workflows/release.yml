@@ -339,42 +339,42 @@ jobs:
 
     - name: Download Windows Installer
       if: needs.windows-release.result == 'success'
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: prtgn-windows-installer
         path: prtgn-windows-installer
 
     - name: Download Debian Package
       if: needs.debian-release.result == 'success'
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: prtgn-debian-package
         path: prtgn-debian-package
 
     - name: Download Fedora Package
       if: needs.fedora-release.result == 'success'
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: prtgn-fedora-package
         path: prtgn-fedora-package
 
     - name: Download Windows ARM Executable
       if: needs.windows-release-arm.result == 'success'
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: prtgn-windows-arm-executable
         path: prtgn-windows-arm-executable
 
     - name: Download Debian ARM Package
       if: needs.debian-release-arm.result == 'success'
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: prtgn-debian-arm-package
         path: prtgn-debian-arm-package
 
     - name: Download Fedora ARM Package
       if: needs.fedora-release-arm.result == 'success'
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: prtgn-fedora-arm-package
         path: prtgn-fedora-arm-package
