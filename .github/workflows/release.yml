@@ -98,7 +98,7 @@ jobs:
         iscc /DGITHUB_ACTIONS inno.iss
 
     - name: Upload Windows Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: prtgn-windows-installer
         path: Output/prtgn_v${{ needs.get-version.outputs.version }}_x86_64.exe
@@ -126,7 +126,7 @@ jobs:
       run: ren target\aarch64-pc-windows-msvc\release\prtgn.exe prtgn_v${{ needs.get-version.outputs.version }}_aarch64.exe
 
     - name: Upload Windows ARM Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: prtgn-windows-arm-executable
         path: target/aarch64-pc-windows-msvc/release/prtgn_v${{ needs.get-version.outputs.version }}_aarch64.exe
@@ -156,7 +156,7 @@ jobs:
       run: cargo deb --output target/debian/prtgn_v${{ needs.get-version.outputs.version }}_x86_64.deb
 
     - name: Upload Debian Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: prtgn-debian-package
         path: target/debian/prtgn_v${{ needs.get-version.outputs.version }}_x86_64.deb
@@ -209,7 +209,7 @@ jobs:
         cargo deb --target aarch64-unknown-linux-gnu --output target/debian/prtgn_v${{ needs.get-version.outputs.version }}_aarch64.deb
 
     - name: Upload Debian ARM Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: prtgn-debian-arm-package
         path: target/debian/prtgn_v${{ needs.get-version.outputs.version }}_aarch64.deb
@@ -254,7 +254,7 @@ jobs:
         echo "new_path=$new_path" >> $GITHUB_OUTPUT
 
     - name: Upload Fedora Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: prtgn-fedora-package
         path: ${{ steps.rename_rpm.outputs.new_path }}
@@ -322,7 +322,7 @@ jobs:
         echo "new_path=$new_path" >> $GITHUB_OUTPUT
 
     - name: Upload Fedora ARM Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: prtgn-fedora-arm-package
         path: ${{ steps.rename_rpm_arm.outputs.new_path }}
