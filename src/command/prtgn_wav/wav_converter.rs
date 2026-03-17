@@ -85,8 +85,8 @@ pub fn prtgn_to_wav(filename: String) -> Result<(), Box<dyn std::error::Error>> 
         return Err("Mate. No. That wont work. Your files invalid. Try again.".into());
     }
 
-    let channels: u16 = parts[0].parse()?;
-    let sample_rate: u32 = parts[1].parse()?;
+    let channels = parts[0].parse()?;
+    let sample_rate = parts[1].parse()?;
     let samples_str = parts[2];
 
     let sample_strings: Vec<&str> = samples_str.split(' ').collect();

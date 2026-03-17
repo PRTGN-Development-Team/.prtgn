@@ -8,7 +8,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-use rodio::{OutputStreamBuilder, Sink, Source};
+use rodio::{DeviceSinkBuilder, Player, Source};
 use rodio::buffer::SamplesBuffer;
 use std::sync::mpsc;
 use std::thread;
@@ -42,8 +42,8 @@ pub fn player(source: SamplesBuffer, _filename: String) -> Result<()> {
 
     // Audio thread
     let audio_thread = thread::spawn(move || -> Result<()> {
-        let stream_handle = OutputStreamBuilder::open_default_stream()?;
-        let sink = Sink::connect_new(&stream_handle.mixer());
+        let stream_handle = DeviceSinkBuilder::open_default_sink()?;
+        let sink = Player::connect_new(&stream_handle.mixer());
 
         sink.pause();
         sink.append(source);
@@ -118,7 +118,7 @@ fn run(
     terminal: &mut DefaultTerminal,
     tx: mpsc::Sender<PlayerCommand>,
     progress_rx: mpsc::Receiver<(Duration, Duration)>,
-    sample_rate: u32,
+    sample_rate: rodio::SampleRate,
     total_duration: Duration,
 ) -> Result<()> {
     let mut current_progress = (Duration::ZERO, total_duration);
@@ -131,7 +131,7 @@ fn run(
 
 
 
-        terminal.draw(|f| draw(f, sample_rate, current_progress))?;
+        terminal.draw(|f| draw(f, sample_rate.into(), current_progress))?;
 
         // Non-blocking event poll loop
         let mut quit = false;
