@@ -16,7 +16,7 @@ A protogen CLI resource.
 
 1. Download and install the Debian Package (.deb) file. Make sure you have the right processor type. (x86_64 or Aarm64)
 
-### Fedora / RHEL Based Linux (Fedora, Red Hat Enterprise Linux (RHEL), Rocky Linux, Cent OS, e.t.c.)
+### Fedora / RHEL Based Linux (Fedora, PRTGN Linux, Red Hat Enterprise Linux (RHEL), Rocky Linux, Cent OS, e.t.c.)
 
 1. Download and install the RPM Package Manager/Red Hat Package Manager (.rpm) file. Make sure you have the right processor type. (x86_64 or Aarm64)
 
