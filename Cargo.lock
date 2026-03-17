@@ -2507,7 +2507,7 @@ dependencies = [
 
 [[package]]
 name = "prtgn"
-version = "0.4.1"
+version = "0.4.2"
 dependencies = [
  "clap",
  "claxon",
@@ -2520,11 +2520,11 @@ dependencies = [
  "prtgn_encoding",
  "ratatui",
  "ratatui-image",
+ "ratatui-textarea",
  "reqwest",
  "rodio",
  "tokio",
  "tui-input",
- "tui-textarea",
 ]
 
 [[package]]
@@ -2832,6 +2832,18 @@ checksum = "0f76fe0bd0ed4295f0321b1676732e2454024c15a35d01904ddb315afd3d545c"
 dependencies = [
  "ratatui-core",
  "termwiz",
+]
+
+[[package]]
+name = "ratatui-textarea"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "de236b7cc74b3f7dea227b3fbad97bf459cddf552b6503d888fb9a106eda59ab"
+dependencies = [
+ "ratatui-core",
+ "ratatui-crossterm",
+ "ratatui-widgets",
+ "unicode-width",
 ]
 
 [[package]]
@@ -4014,16 +4026,6 @@ version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "79c1ee964298f136020f5f69e0e601f4d3a1f610a7baf1af9fcb96152e8a2c45"
 dependencies = [
- "ratatui",
- "unicode-width",
-]
-
-[[package]]
-name = "tui-textarea"
-version = "0.7.0"
-source = "git+https://github.com/PRTGN-Development-Team/tui-textarea#e3ffb1a3b1485bf4f8d63e249d79ba77116b002f"
-dependencies = [
- "crossterm",
  "ratatui",
  "unicode-width",
 ]

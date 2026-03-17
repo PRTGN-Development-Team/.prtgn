@@ -12,7 +12,7 @@ use std::borrow::Cow;
 use std::{env};
 use std::io::{self};
 use std::path::PathBuf;
-use tui_textarea::{Input, Key, TextArea};
+use ratatui_textarea::{Input, Key, TextArea};
 use prtgn_encoding::{read, write};
 
 macro_rules! error {
