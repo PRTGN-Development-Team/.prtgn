@@ -1,1 +1,2 @@
 *.iss linguist-generated
+*.rs linguist-language=Rust
