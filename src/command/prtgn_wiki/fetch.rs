@@ -10,6 +10,12 @@
 
 pub async fn fetch(message: String) {
 
-    
+    todo!("
+        Add Wikimedia API complient reqwest. | 
+        https://docs.rs/reqwest/latest/reqwest/struct.ClientBuilder.html#method.user_agent | 
+        https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits#Limits | 
+        https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy | 
+        Do all reqwest functions in this file. May be able to have the selection file pass the url to the serach file, and then to here to use as the reqwest api url. Otherwise might be able to send directly to this file.
+    ");
     
 }
