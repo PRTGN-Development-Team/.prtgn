@@ -2577,9 +2577,9 @@ dependencies = [
 
 [[package]]
 name = "prtgn_encoding"
-version = "0.3.0"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09eb2e5dfac327b5a25210224d08df6ce35fa71c7ab2fa70243b25c20850cbaf"
+checksum = "0cb01ee875f6b267f682170c260499f4c2285b98e66549a0bd7b7972a1bc3b76"
 dependencies = [
  "lz4_flex",
 ]

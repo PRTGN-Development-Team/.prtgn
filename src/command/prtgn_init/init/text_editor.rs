@@ -13,7 +13,7 @@ use std::{env};
 use std::io::{self};
 use std::path::PathBuf;
 use ratatui_textarea::{Input, Key, TextArea};
-use prtgn_encoding::{read, write};
+use prtgn_encoding::{read, compress_write};
 
 macro_rules! error {
     ($fmt: expr $(, $args:tt)*) => {{
@@ -176,7 +176,7 @@ impl Editor<'_> {
                             let buffer = &mut self.buffers[self.current];
                             if buffer.modified {
                                 let prtgn_text = buffer.textarea.lines().join("\n");
-                                write(buffer.path.to_string_lossy().to_string(), prtgn_text).map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{}", e)))?;
+                                compress_write(buffer.path.to_string_lossy().to_string(), prtgn_text).map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{}", e)))?;
                                 buffer.modified = false;
                                 self.message = Some("Saved!".into());
                             } else {

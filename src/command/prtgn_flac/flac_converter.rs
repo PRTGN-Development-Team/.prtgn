@@ -10,7 +10,7 @@
 
 use crate::command::player::player;
 use claxon;
-use prtgn_encoding::{read, write};
+use prtgn_encoding::{read, compress_write};
 use rodio::{Decoder, Source, buffer::SamplesBuffer};
 use std::fs::File;
 use std::io::BufReader;
@@ -66,7 +66,7 @@ pub fn flac_to_prtgn(filename: String) -> Result<(), Box<dyn std::error::Error>>
         filename_prtgn.push_str(".prtgn_flac");
     }
 
-    write(filename_prtgn, source)?;
+    compress_write(filename_prtgn, source)?;
 
     Ok(())
 }
